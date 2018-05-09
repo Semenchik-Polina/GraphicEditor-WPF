@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace GraphicEditor
 {
     public class Triangle: Figure
     {
-        public Triangle(Color color, Point startPoint, Point endPoint) : base(color, startPoint, endPoint)
+        public Triangle(Canvas canvas, Color color, Point startPoint, Point endPoint) : base(canvas, color, startPoint, endPoint)
         { }
 
         public override void Draw()
@@ -24,6 +25,7 @@ namespace GraphicEditor
             PathGeometry pg = new PathGeometry();
             pg.Figures.Add(pf);
             path.Data = pg;
+            canvas.Children.Add(path);
         }
     }
 }

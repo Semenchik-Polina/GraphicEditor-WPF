@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GraphicEditor"
         mc:Ignorable="d"
-        Title="Almost Paint" Height="800" Width="1300">
+        Title="Almost Paint" Height="800" Width="1300" Loaded="Window_Loaded">
 
     <Grid>
          <Grid.ColumnDefinitions>
@@ -25,7 +25,7 @@
             <Button Name="BCancel" Click="BCancel_Click">Cancel</Button>
             <Button Name="BClear" Click="BClear_Click">Clear</Button>
         </StackPanel>
-        <Canvas Grid.Column="1" x:Name="CanvasMain" ClipToBounds="True">
-        </Canvas>
+        <Canvas Grid.Column="1" Background="Beige" x:Name="CanvasMain" ClipToBounds="True" MouseDown="CanvasMain_MouseDown" MouseUp="CanvasMain_MouseUp"/>
+
     </Grid>
 </Window>

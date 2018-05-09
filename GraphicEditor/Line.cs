@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -11,7 +12,7 @@ namespace GraphicEditor
 {
     public class Line: Figure
     {
-        public Line(Color color, Point startPoint, Point endPoint):base (color, startPoint, endPoint)
+        public Line(Canvas canvas, Color color, Point startPoint, Point endPoint):base (canvas, color, startPoint, endPoint)
         { }
 
         public override void Draw()
@@ -21,6 +22,7 @@ namespace GraphicEditor
             lineGeometry.EndPoint = EndPoint;
 
             path.Data = lineGeometry;
+            canvas.Children.Add(path);
         }
     }
 }

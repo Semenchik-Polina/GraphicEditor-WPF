@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace GraphicEditor
 {
     public class Ellipse: Rectangle
     {
-        public Ellipse(Color color, Point startPoint, Point endPoint) : base(color, startPoint, endPoint)
+        public Ellipse(Canvas canvas, Color color, Point startPoint, Point endPoint) : base(canvas, color, startPoint, endPoint)
         { }
 
         protected double RadiusY
@@ -36,6 +37,7 @@ namespace GraphicEditor
             ellipseGeometry.RadiusY = RadiusY;
 
             path.Data = ellipseGeometry;
+            canvas.Children.Add(path);
         }
     }
 }

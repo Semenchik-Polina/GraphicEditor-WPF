@@ -4,20 +4,30 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace GraphicEditor
 {
     public class Square:Figure
     {
-        public Square(Color color, Point startPoint, Point endPoint) : base(color, startPoint, endPoint)
+        public Square(Canvas canvas, Color color, Point startPoint, Point endPoint) : base(canvas, color, startPoint, endPoint)
         { }
 
         protected Size size;
 
         protected double Height
         {
-            get { return EndPoint.Y - StartPoint.Y; }
+            get {
+                if (startPoint.Y > endPoint.Y)
+                {
+                    Point temp = new Point();
+                    temp = endPoint;
+                    endPoint = startPoint;
+                    startPoint = temp;
+                }
+                return EndPoint.Y - StartPoint.Y;
+            }
         }
 
         public override void Draw()
@@ -27,6 +37,7 @@ namespace GraphicEditor
             rectangleGeometry.Rect = new Rect(StartPoint,size);
 
             path.Data = rectangleGeometry;
+            canvas.Children.Add(path);
         }
     }
 }

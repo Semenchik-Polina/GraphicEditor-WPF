@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows;
 using System.Windows.Shapes;
+using System.Windows.Controls;
 
 namespace GraphicEditor
 {
@@ -15,6 +16,7 @@ namespace GraphicEditor
         protected Point startPoint;
         protected Point endPoint;
         public Path path;
+        public Canvas canvas;
 
         public Point StartPoint
         {
@@ -28,12 +30,14 @@ namespace GraphicEditor
             set { endPoint = value; }
         }
             
-        public Figure(Color color, Point startPoint, Point endPoint)
+        public Figure(Canvas canvas, Color color, Point startPoint, Point endPoint)
         {
+            path = new Path();
             SolidColorBrush brush = new SolidColorBrush(color);
             this.path.Stroke = brush;
             this.startPoint = startPoint;
             this.endPoint = endPoint;
+            this.canvas = canvas;
         }
 
         public abstract void Draw();
