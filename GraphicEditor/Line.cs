@@ -11,8 +11,6 @@ using System.Windows.Shapes;
 
 namespace GraphicEditor
 {
-    [KnownType(typeof(Line))]
-    [DataContract(Name = "Line")]
     public class Line: Figure
     {
         public Line(Canvas canvas, Color color, Point startPoint, Point endPoint):base (canvas, color, startPoint, endPoint)
@@ -20,14 +18,20 @@ namespace GraphicEditor
             typeName = "Line";
         }
 
-        public override void Draw()
+        public override void Draw(Canvas canvas)
         {
             LineGeometry lineGeometry = new LineGeometry();
-            lineGeometry.StartPoint = StartPoint;
-            lineGeometry.EndPoint = EndPoint;
+            lineGeometry.StartPoint = startPoint;
+
+            lineGeometry.EndPoint = endPoint;
 
             path.Data = lineGeometry;
-            canvas.Children.Add(path);
+            try
+            {
+                canvas.Children.Add(path);
+            }
+            catch
+            { }
         }
     }
 }

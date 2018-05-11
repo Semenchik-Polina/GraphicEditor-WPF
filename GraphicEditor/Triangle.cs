@@ -10,8 +10,6 @@ using System.Windows.Media;
 
 namespace GraphicEditor
 {
-    [KnownType(typeof(Triangle))]
-    [DataContract(Name = "Triangle")]
     public class Triangle: Figure
     {
         public Triangle(Canvas canvas, Color color, Point startPoint, Point endPoint) : base(canvas, color, startPoint, endPoint)
@@ -19,7 +17,7 @@ namespace GraphicEditor
             typeName = "Triangle";
         }
 
-        public override void Draw()
+        public override void Draw(Canvas canvas)
         {
             PathFigure pf = new PathFigure();
             pf.StartPoint = startPoint;
@@ -30,7 +28,12 @@ namespace GraphicEditor
             PathGeometry pg = new PathGeometry();
             pg.Figures.Add(pf);
             path.Data = pg;
-            canvas.Children.Add(path);
+            try
+            {
+                canvas.Children.Add(path);
+            }
+            catch
+            { }
         }
     }
 }

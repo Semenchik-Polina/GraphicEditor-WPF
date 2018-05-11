@@ -14,9 +14,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
-using System.Runtime.Serialization.Json;
-using System.Runtime.Serialization;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace GraphicEditor
 {
@@ -96,20 +95,6 @@ namespace GraphicEditor
             curFigure = new Line(CanvasMain, color, startPoint, endPoint);
         }
 
-        private void CanvasMain_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (curFigure != null)
-            {
-                endPoint = e.GetPosition(CanvasMain);
-                curFigure = (Figure)Activator.CreateInstance(curFigure.GetType(), canvas, color, startPoint, endPoint);
-                curFigure.Draw();
-                listOfFigures.Add(curFigure);
-                ListBoxItem item = new ListBoxItem();
-                item.Content = curFigure.typeName;
-                ListBoxOfFigures.Items.Add(item);
-            }
-        }
-
         public HitTestResultBehavior HitTestResultHandler(HitTestResult result)
         {
             PointHitTestResult hitResult = (PointHitTestResult)result;
@@ -121,34 +106,67 @@ namespace GraphicEditor
             return HitTestResultBehavior.Stop;
         }
 
-        private void CanvasMain_MouseDown(object sender, MouseButtonEventArgs e)
+        private void CanvasMain_MouseUp(object sender, MouseButtonEventArgs e)
         {
+            endPoint = e.GetPosition(CanvasMain);
             if (curFigure != null)
             {
-                startPoint = e.GetPosition(canvas);
+                curFigure = (Figure)Activator.CreateInstance(curFigure.GetType(), canvas, color, startPoint, endPoint);
+                curFigure.Draw(canvas);
+                listOfFigures.Add(curFigure);
+                ListBoxItem item = new ListBoxItem();
+                item.Content = curFigure.typeName;
+                ListBoxOfFigures.Items.Add(item);
             }
             else
+            {
+                Figure tempFigure;
+                tempFigure = listOfFigures[ListBoxOfFigures.SelectedIndex];
+                tempFigure.startPoint.X += endPoint.X - startPoint.X;
+                tempFigure.startPoint.Y += endPoint.Y - startPoint.Y;
+                tempFigure.endPoint.X += endPoint.X - startPoint.X;
+                tempFigure.endPoint.Y += endPoint.Y - startPoint.Y;
+                tempFigure.Draw(canvas);
+            }
+        }
+    
+        private void CanvasMain_MouseDown(object sender, MouseButtonEventArgs e)
+        { 
+            startPoint = e.GetPosition(canvas);
+            
+            if (curFigure == null)
             {
                 Point position = e.GetPosition(canvas);
                 hitList.Clear();
                 VisualTreeHelper.HitTest(canvas, null, new HitTestResultCallback(HitTestResultHandler), new PointHitTestParameters(position) );
                 if (hitList.Count > 0)
                 {
-          //          MessageBox.Show("You hit " + hitList.Count + " figures");
                     for (int i= canvas.Children.Count-1; i>=0; i--)
                     {
                         if (canvas.Children[i].Equals(hitList[0]))
                         {
-                            MessageBox.Show(i.ToString());
+                            ListBoxOfFigures.SelectedIndex = i;
                         }
                     }
                 }
             }
         }
 
+        private void CanvasMain_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (curFigure != null) { }
+            else
+            {
+                ScaleTransform scaleTransform = new ScaleTransform();
+         //       scaleTransform.ScaleX = mou
+            }
+        }
+
+
+        readonly JsonSerializerSettings settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All };
+
         private void BSave_Click(object sender, RoutedEventArgs e)
         {
-            DataContractJsonSerializer jsonFormatter = new DataContractJsonSerializer(typeof(List<Figure>));
             SaveFileDialog saveFileDialog = new SaveFileDialog()
             {
                 InitialDirectory = "C:\\Projects\\ООП\\CoolPaint",
@@ -156,68 +174,59 @@ namespace GraphicEditor
                 FilterIndex = 0
             };
             if (saveFileDialog.ShowDialog() == true)
-            {     
-                using (FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.OpenOrCreate))
+            {
+                using (FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.OpenOrCreate | FileMode.Truncate))
                 {
-                    jsonFormatter.WriteObject(fs, listOfFigures);
+                    var json = JsonConvert.SerializeObject(listOfFigures, Formatting.None, settings);
+                    var writeStream = new StreamWriter(fs);
+                    writeStream.Write(json);
+                    writeStream.Flush();
                 }
             }
         }
 
         private void BLoad_Click(object sender, RoutedEventArgs e)
         {
-            List<Figure> newList = new List<Figure>();
-            DataContractJsonSerializer jsonFormatter = new DataContractJsonSerializer(typeof(List<Figure>));
             OpenFileDialog openFileDialog = new OpenFileDialog()
             {
                 InitialDirectory = "C:\\Projects\\ООП\\CoolPaint",
                 Filter = "JSON Files (*.json)|*.json|All files (*.*)|*.*",
                 FilterIndex = 0
             };
-            if (openFileDialog.ShowDialog() == true)
+             if (openFileDialog.ShowDialog() == true)
             {
-                using (FileStream fs = new FileStream(openFileDialog.FileName, FileMode.OpenOrCreate))
+                using (var fStream = File.OpenRead(openFileDialog.FileName))
                 {
-                    try
+                    var json = new StreamReader(fStream).ReadToEnd();
+                    var figures = JsonConvert.DeserializeObject<List<Figure>>(json, settings);
+                    canvas.InvalidateVisual();
+                    foreach (Figure figure in figures)
                     {
-                        newList = jsonFormatter.ReadObject(fs) as List<Figure>;
+                        figure.Draw(canvas);
+                     //   curFigure = (Figure)Activator.CreateInstance(figure.GetType(), canvas, figure.color, figure.StartPoint, figure.ndPoint);
+                     //   curFigure.Draw(canvas);
+               
+                        listOfFigures.Add(figure);
+                        ListBoxOfFigures.Items.Add(figure.typeName);
                     }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("JSON you loaded is corrupted and raised the following exception: " + ex.Message, "Error");
-                    }
+                    canvas.InvalidateVisual();
                 }
             }
-
-            foreach (Figure figure in newList)
-            {
-                figure.Draw();
-                listOfFigures.Add(curFigure);
-            }
-
+            canvas.InvalidateVisual();
         }
-
-     /*   private void DeleteItem(object sender, List<> list, int index)
-        {
-            
-        }*/  
 
         private void BRemove_Click(object sender, RoutedEventArgs e)
         {
             if (ListBoxOfFigures.SelectedItem != null)
             {
                 int selectedIndex = ListBoxOfFigures.SelectedIndex;
-////////////////////////////////////////////////////////////////////////////////FIX ME 
                 canvas.Children.Remove(canvas.Children[selectedIndex]); 
-       //         canvas.Children.Remove(canvas.Children[canvas.Children.Count - 1]);
-
                 ListBoxOfFigures.Items.Remove(ListBoxOfFigures.Items[selectedIndex]);
-         //       ListBoxOfFigures.Items.Remove(ListBoxOfFigures.Items[ListBoxOfFigures.Items.Count - 1]);
-
-
                 listOfFigures.Remove(listOfFigures[selectedIndex]);
              }
         }
+
+      
 
         private void BChange_Click(object sender, RoutedEventArgs e)
         {

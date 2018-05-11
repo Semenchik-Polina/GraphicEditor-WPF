@@ -20,7 +20,7 @@
             <Button Name="BRectangle" Click="BRectangle_Click">Rectangle</Button>
             <Button Name="BCircle" Click="BCircle_Click">Circle</Button>
             <Button Name="BEllipse" Click="BEllipse_Click">Ellipse</Button>
-            <Button Name="BChange" Click="BChange_Click">Change</Button>
+            <Button Name="BChange" Click="BChange_Click">Move</Button>
         </StackPanel>
         <StackPanel Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,0.4" Width="140">
             <Button Name="BSave" Click="BSave_Click">Save</Button>
@@ -33,7 +33,7 @@
             <ListBox Name="ListBoxOfFigures" ScrollViewer.VerticalScrollBarVisibility="Visible">
             </ListBox>
         </StackPanel>
-        <Canvas Grid.Column="1" Background="Beige" x:Name="CanvasMain" ClipToBounds="True" MouseDown="CanvasMain_MouseDown" MouseUp="CanvasMain_MouseUp"/>
+        <Canvas Grid.Column="1" Background="Beige" x:Name="CanvasMain" ClipToBounds="True" MouseDown="CanvasMain_MouseDown" MouseUp="CanvasMain_MouseUp" MouseMove="CanvasMain_MouseMove"/>
 
     </Grid>
 </Window>

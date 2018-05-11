@@ -7,37 +7,19 @@ using System.Windows.Media;
 using System.Windows;
 using System.Windows.Shapes;
 using System.Windows.Controls;
-using System.Runtime.Serialization;
-
+using Newtonsoft.Json;
 
 namespace GraphicEditor
 {
-    [KnownType(typeof(Figure))]
-    [DataContract(Name = "Figure")]
     public abstract class Figure
     {
-        [DataMember]
         public Color color;
-        [DataMember]
-        protected Point startPoint;
-        [DataMember]
-        protected Point endPoint;
+        public Point startPoint;
+        public Point endPoint;
     //    [DataMember]
-        public Path path;
-        public Canvas canvas;
+        protected Path path;
+        protected Canvas canvas;
         public string typeName;
-
-        public Point StartPoint
-        {
-            get { return startPoint; }
-            set { startPoint = value;}
-        }
-
-        public Point EndPoint
-        {
-            get { return endPoint; }
-            set { endPoint = value; }
-        }
             
         public Figure(Canvas canvas, Color color, Point startPoint, Point endPoint)
         {
@@ -50,7 +32,7 @@ namespace GraphicEditor
             this.canvas = canvas;
         }
 
-        public abstract void Draw();
+        public abstract void Draw(Canvas canvas);
 
         ~Figure()
         {

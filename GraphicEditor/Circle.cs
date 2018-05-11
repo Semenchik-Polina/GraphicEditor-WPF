@@ -10,8 +10,6 @@ using System.Windows.Media;
 
 namespace GraphicEditor
 {
-    [KnownType(typeof(Circle))]
-    [DataContract(Name = "Circle")]
     public class Circle: Square
     {
         public Circle(Canvas canvas, Color color, Point startPoint, Point endPoint) : base(canvas, color, startPoint, endPoint)
@@ -19,14 +17,19 @@ namespace GraphicEditor
             typeName = "Circle";
         }
 
-        public override void Draw()
+        public override void Draw(Canvas canvas)
         {
             size = new Size(Height, Height);
-            Rect rect = new Rect(StartPoint, size);
+            Rect rect = new Rect(startPoint, size);
             EllipseGeometry ellipseGeometry = new EllipseGeometry(rect);
             
             path.Data = ellipseGeometry;
-            canvas.Children.Add(path);
+            try
+            {
+                canvas.Children.Add(path);
+            }
+            catch
+            { }
         }
     }
 }

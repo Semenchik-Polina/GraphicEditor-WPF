@@ -10,8 +10,6 @@ using System.Windows.Media;
 
 namespace GraphicEditor
 {
-    [KnownType(typeof(Ellipse))]
-    [DataContract(Name = "Ellipse")]
     public class Ellipse: Rectangle
     {
         public Ellipse(Canvas canvas, Color color, Point startPoint, Point endPoint) : base(canvas, color, startPoint, endPoint)
@@ -19,14 +17,19 @@ namespace GraphicEditor
             typeName = "Ellipse";
         }
 
-        public override void Draw()
+        public override void Draw(Canvas canvas)
         {
             size = new Size(Width, Height);
-            Rect rect = new Rect(StartPoint, size);
+            Rect rect = new Rect(startPoint, size);
             EllipseGeometry ellipseGeometry = new EllipseGeometry(rect);
 
             path.Data = ellipseGeometry;
-            canvas.Children.Add(path);
+            try
+            {
+                canvas.Children.Add(path);
+            }
+            catch
+            {  }
         }
     }
 }

@@ -10,8 +10,6 @@ using System.Windows.Media;
 
 namespace GraphicEditor
 {
-    [KnownType(typeof(Rectangle))]
-    [DataContract(Name = "Rectangle")]
     public class Rectangle : Square
     {
         public Rectangle(Canvas canvas, Color color, Point startPoint, Point endPoint):base (canvas, color, startPoint, endPoint)
@@ -33,14 +31,19 @@ namespace GraphicEditor
             }
         }
 
-        public override void Draw()
+        public override void Draw(Canvas canvas)
         {
             size = new Size(Width, Height);
             RectangleGeometry rectangleGeometry = new RectangleGeometry();
             rectangleGeometry.Rect = new Rect(startPoint, size);
 
             path.Data = rectangleGeometry;
-            canvas.Children.Add(path);
+            try
+            {
+                canvas.Children.Add(path);
+            }
+            catch
+            { }
         }
 
     }

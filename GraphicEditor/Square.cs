@@ -10,8 +10,6 @@ using System.Windows.Media;
 
 namespace GraphicEditor
 {
-    [KnownType(typeof(Square))]
-    [DataContract(Name = "Square")]
     public class Square:Figure
     {
         public Square(Canvas canvas, Color color, Point startPoint, Point endPoint) : base(canvas, color, startPoint, endPoint)
@@ -31,18 +29,23 @@ namespace GraphicEditor
                     endPoint = startPoint;
                     startPoint = temp;
                 }
-                return EndPoint.Y - StartPoint.Y;
+                return endPoint.Y - startPoint.Y;
             }
         }
 
-        public override void Draw()
+        public override void Draw(Canvas canvas)
         {
             size = new Size(Height, Height);
             RectangleGeometry rectangleGeometry = new RectangleGeometry();
-            rectangleGeometry.Rect = new Rect(StartPoint,size);
+            rectangleGeometry.Rect = new Rect(startPoint,size);
 
             path.Data = rectangleGeometry;
-            canvas.Children.Add(path);
+            try
+            {
+                canvas.Children.Add(path);
+            }
+            catch
+            { }
         }
     }
 }
