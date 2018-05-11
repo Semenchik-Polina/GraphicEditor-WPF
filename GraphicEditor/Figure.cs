@@ -7,16 +7,25 @@ using System.Windows.Media;
 using System.Windows;
 using System.Windows.Shapes;
 using System.Windows.Controls;
+using System.Runtime.Serialization;
+
 
 namespace GraphicEditor
 {
+    [KnownType(typeof(Figure))]
+    [DataContract(Name = "Figure")]
     public abstract class Figure
     {
+        [DataMember]
         public Color color;
+        [DataMember]
         protected Point startPoint;
+        [DataMember]
         protected Point endPoint;
+    //    [DataMember]
         public Path path;
         public Canvas canvas;
+        public string typeName;
 
         public Point StartPoint
         {
@@ -35,6 +44,7 @@ namespace GraphicEditor
             path = new Path();
             SolidColorBrush brush = new SolidColorBrush(color);
             this.path.Stroke = brush;
+            path.StrokeThickness = 3;
             this.startPoint = startPoint;
             this.endPoint = endPoint;
             this.canvas = canvas;
@@ -44,7 +54,7 @@ namespace GraphicEditor
 
         ~Figure()
         {
-         //   pen.Dispose();
+            //   pen.Dispose();
         }
     }
 }

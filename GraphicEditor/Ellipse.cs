@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -9,10 +10,14 @@ using System.Windows.Media;
 
 namespace GraphicEditor
 {
+    [KnownType(typeof(Ellipse))]
+    [DataContract(Name = "Ellipse")]
     public class Ellipse: Rectangle
     {
         public Ellipse(Canvas canvas, Color color, Point startPoint, Point endPoint) : base(canvas, color, startPoint, endPoint)
-        { }
+        {
+            typeName = "Ellipse";
+        }
 
         protected double RadiusY
         {

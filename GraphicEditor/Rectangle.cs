@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -9,10 +10,14 @@ using System.Windows.Media;
 
 namespace GraphicEditor
 {
+    [KnownType(typeof(Rectangle))]
+    [DataContract(Name = "Rectangle")]
     public class Rectangle : Square
     {
         public Rectangle(Canvas canvas, Color color, Point startPoint, Point endPoint):base (canvas, color, startPoint, endPoint)
-        {  }
+        {
+            typeName = "Rectangle";
+        }
 
         protected double Width
         {
@@ -37,5 +42,6 @@ namespace GraphicEditor
             path.Data = rectangleGeometry;
             canvas.Children.Add(path);
         }
+
     }
 }
