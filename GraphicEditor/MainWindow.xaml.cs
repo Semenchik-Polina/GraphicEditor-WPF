@@ -23,7 +23,7 @@ namespace GraphicEditor
    public partial class MainWindow : Window
     {
         protected List<Figure> listOfFigures = new List<Figure>();
-        public List<System.Windows.Media.Visual> hitList;
+        public List<Visual> hitList;
         public Figure curFigure;
         public Color color = Color.FromRgb(0,0,0);
         protected Point startPoint, endPoint;
@@ -73,11 +73,22 @@ namespace GraphicEditor
             {
                 canvas.Children.Remove(canvas.Children[canvas.Children.Count - 1]);
             }
+            if (ListBoxOfFigures.Items.Count != 0)
+            {
+                ListBoxOfFigures.Items.Remove(ListBoxOfFigures.Items[ListBoxOfFigures.Items.Count - 1]);
+
+            }
+            if (listOfFigures.Count != 0)
+            {
+                listOfFigures.Remove(listOfFigures[listOfFigures.Count - 1]);
+            }
         }
 
         private void BClear_Click(object sender, RoutedEventArgs e)
         {
+            listOfFigures.Clear();
             canvas.Children.Clear();
+            ListBoxOfFigures.Items.Clear();
         }
 
         private void BLine_Click(object sender, RoutedEventArgs e)
@@ -99,29 +110,12 @@ namespace GraphicEditor
             }
         }
 
-  /*      public HitTestResultBehavior HitTestCallback(HitTestResult htrResult)
-        {
-            IntersectionDetail idDetail = ((GeometryHitTestResult)htrResult).IntersectionDetail;
-            switch (idDetail)
-            {
-                case IntersectionDetail.FullyContains:
-                    hitList.Add((Figure)htrResult.VisualHit);
-                    return HitTestResultBehavior.Continue;
-                case IntersectionDetail.Intersects:
-                    return HitTestResultBehavior.Continue;
-                case IntersectionDetail.FullyInside:
-                    return HitTestResultBehavior.Continue;
-                default:
-                    return HitTestResultBehavior.Stop;
-            }
-        }*/
-
         public HitTestResultBehavior HitTestResultHandler(HitTestResult result)
         {
             PointHitTestResult hitResult = (PointHitTestResult)result;
             if (result.VisualHit != CanvasMain)
             {
-                hitList.Add((System.Windows.Media.Visual)result.VisualHit);
+                hitList.Add((Visual)result.VisualHit);
                 return HitTestResultBehavior.Continue;
             }
             return HitTestResultBehavior.Stop;
@@ -140,50 +134,15 @@ namespace GraphicEditor
                 VisualTreeHelper.HitTest(canvas, null, new HitTestResultCallback(HitTestResultHandler), new PointHitTestParameters(position) );
                 if (hitList.Count > 0)
                 {
-                    MessageBox.Show("You hit " + hitList.Count + " figures");
-                }
-
-                /*
-                Point ptCurrent = e.GetPosition(canvas);
-                EllipseGeometry hitArea = new EllipseGeometry(ptCurrent, 1, 1);
-                hitList.Clear();
-                VisualTreeHelper.HitTest(canvas, null, new HitTestResultCallback(HitTestCallback), new GeometryHitTestParameters(hitArea));
-                if (hitList.Count > 0)
-                {
-                    MessageBox.Show("You hit " + hitList.Count + " figures");
-                }
-
-
-                       int ClickMargin = 2;  
-                        var ClickMarginPointList = new System.Collections.ObjectModel.Collection<Point>();
-                        Point ClickedPoint = e.GetPosition(canvas);
-                        Point ClickMarginPoint = new Point();
-                        for (int x = -1 * ClickMargin; x <= ClickMargin; x++)
+          //          MessageBox.Show("You hit " + hitList.Count + " figures");
+                    for (int i= canvas.Children.Count-1; i>=0; i--)
+                    {
+                        if (canvas.Children[i].Equals(hitList[0]))
                         {
-                            for (int y = -1 * ClickMargin; y <= ClickMargin; y++)
-                            {
-                                ClickMarginPoint.X = ClickedPoint.X + x;
-                                ClickMarginPoint.Y = ClickedPoint.Y + y;
-                                ClickMarginPointList.Add(ClickMarginPoint);
-                            }
+                            MessageBox.Show(i.ToString());
                         }
-
-                        foreach (Point p in ClickMarginPointList)
-                        {
-                            HitTestResult SelectedCanvasItem = VisualTreeHelper.HitTest(canvas, p);
-                            if (SelectedCanvasItem.VisualHit.GetType().BaseType == typeof(Shape))
-                            {
-                                var SelectedShapeTag = SelectedCanvasItem.VisualHit.GetValue(Shape.TagProperty);
-                                if (SelectedShapeTag != null && SelectedShapeTag.GetType().BaseType == typeof(Figure))
-                                {
-                                    Figure SelectedFig = (Figure)SelectedShapeTag;
-                                 //   SetActivePattern(SelectedFig.ParentPattern);
-                                 //   SelectedFig.ParentPattern.CurrentHole = SelectedFig;
-                                    return; //Get out, we're done.  
-                                }
-                            }
-                        }*/
-                // SelectedFig = 
+                    }
+                }
             }
         }
 
@@ -222,8 +181,6 @@ namespace GraphicEditor
                     try
                     {
                         newList = jsonFormatter.ReadObject(fs) as List<Figure>;
-                     //   string json = File.ReadAllText(openFileDialog.FileName);
-                     //   var tripHistory = (List<Figure>) jsonFormatter.ReadObject( new MemoryStream(Encoding.Unicode.GetBytes(json)));
                     }
                     catch (Exception ex)
                     {
@@ -238,6 +195,28 @@ namespace GraphicEditor
                 listOfFigures.Add(curFigure);
             }
 
+        }
+
+     /*   private void DeleteItem(object sender, List<> list, int index)
+        {
+            
+        }*/  
+
+        private void BRemove_Click(object sender, RoutedEventArgs e)
+        {
+            if (ListBoxOfFigures.SelectedItem != null)
+            {
+                int selectedIndex = ListBoxOfFigures.SelectedIndex;
+////////////////////////////////////////////////////////////////////////////////FIX ME 
+                canvas.Children.Remove(canvas.Children[selectedIndex]); 
+       //         canvas.Children.Remove(canvas.Children[canvas.Children.Count - 1]);
+
+                ListBoxOfFigures.Items.Remove(ListBoxOfFigures.Items[selectedIndex]);
+         //       ListBoxOfFigures.Items.Remove(ListBoxOfFigures.Items[ListBoxOfFigures.Items.Count - 1]);
+
+
+                listOfFigures.Remove(listOfFigures[selectedIndex]);
+             }
         }
 
         private void BChange_Click(object sender, RoutedEventArgs e)

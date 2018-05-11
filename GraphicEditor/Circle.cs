@@ -19,23 +19,12 @@ namespace GraphicEditor
             typeName = "Circle";
         }
 
-        protected double RadiusY
-        {
-            get { return Height / 2; }
-        }
-
-        protected Point Center
-        {
-            get { return new Point(startPoint.X+RadiusY, startPoint.Y+ RadiusY); }
-        }
-
         public override void Draw()
         {
-            EllipseGeometry ellipseGeometry = new EllipseGeometry();
-            ellipseGeometry.Center = Center;
-            ellipseGeometry.RadiusX = RadiusY;
-            ellipseGeometry.RadiusY = RadiusY;
-
+            size = new Size(Height, Height);
+            Rect rect = new Rect(StartPoint, size);
+            EllipseGeometry ellipseGeometry = new EllipseGeometry(rect);
+            
             path.Data = ellipseGeometry;
             canvas.Children.Add(path);
         }
