@@ -13,9 +13,9 @@
             <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition Width="auto"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <StackPanel Grid.Column="0" HorizontalAlignment="Left" Margin="0,0,0,0.4" Width="140">
+        <StackPanel Name="ShapesPanel" Grid.Column="0" HorizontalAlignment="Left" Margin="0,0,0,0.4" Width="140">
             <Button Name="BLine" Click="BLine_Click">Line</Button>
-             <Button Name="BSquare" Click="BSquare_Click">Square</Button>
+            <Button Name="BSquare" Click="BSquare_Click">Square</Button>
             <Button Name="BRectangle" Click="BRectangle_Click">Rectangle</Button>
             <Button Name="BCircle" Click="BCircle_Click">Circle</Button>
             <Button Name="BEllipse" Click="BEllipse_Click">Ellipse</Button>
@@ -25,7 +25,6 @@
            <Button Name="BChange" Click="BChange_Click">Move</Button>
             <Button Name="BSave" Click="BSave_Click">Save</Button>
             <Button Name="BLoad" Click="BLoad_Click">Load</Button>
-            <Button Name="BCancel" Click="BCancel_Click">Cancel</Button>
             <Button Name="BRemove" Click="BRemove_Click">Remove</Button>
             <Button Name="BClear" Click="BClear_Click">Clear</Button>
         </StackPanel>

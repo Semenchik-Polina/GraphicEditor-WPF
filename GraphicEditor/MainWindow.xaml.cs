@@ -28,7 +28,7 @@ namespace GraphicEditor
         public Figure curFigure;
         public Color color = Color.FromRgb(0,0,0);
         protected Point startPoint, endPoint;
-        Canvas canvas;
+        public Canvas canvas;
 
         public MainWindow()
         {
@@ -43,36 +43,48 @@ namespace GraphicEditor
             hitList = new List<Visual>();
         }
 
+        private List<Figure> AdditionalFigList;
+       
         private void BTriangle_Click(object sender, RoutedEventArgs e)
         {
-            String LibName = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "TriangleLib.dll");
-            if (!File.Exists(LibName)) { Console.Write("File not found"); return; }
-            ///Загружаем сборку
-            Assembly libAssembly = Assembly.LoadFrom(LibName);
-            BTriangle.IsEnabled = false;
-            ///в цикле проходим по всем public-типам сборки
-            foreach (Type t in libAssembly.GetExportedTypes())
+            AdditionalFigList = new List<Figure>();
+            OpenFileDialog openFileDialog = new OpenFileDialog()
             {
-                if (t.IsClass && typeof(ITriangle).IsAssignableFrom(t))
+                Filter = "dll Files (*.dll)|*.dll|All files (*.*)|*.*",
+                FilterIndex = 0
+            };
+            if (openFileDialog.ShowDialog() == true)
+            {
+                Assembly libAssembly = Assembly.LoadFrom(openFileDialog.FileName);
+                BTriangle.IsEnabled = false;
+                foreach (Type t in libAssembly.GetExportedTypes())
                 {
-                    ///создаем объект полученного класса
-                //    ITriangle triangle = (ITriangle)Activator.CreateInstance(t, canvas, color, startPoint, endPoint);
-                    ///вызываем его метод GetAboutText
-                    MessageBox.Show("!");
-                    Button TriangleButton = new Button();
-                    TriangleButton.Name = t.Name;
-           //         typeList.Add(t);
-           //         TriangleButton.Click +=
-                    
+                    if (t.IsClass && typeof(ITriangle).IsAssignableFrom(t))
+                    {
+                        ITriangle triangle = (ITriangle)Activator.CreateInstance(t, canvas, color, startPoint, endPoint);
+                        AdditionalFigList.Add((Figure)triangle);
+                        Button triangleButton = new Button();
+                        triangleButton = triangle.MakeButton();
+                        triangleButton.Click += TriangleButton_Click;
+                        ShapesPanel.Children.Add(triangleButton);
+
+            //            ShapesPanel.Children.
+                    }
                 }
             }
         }
 
-     /*   private void IsoTriangleButton_Click(object sender, RoutedEventArgs e)
+        private void TriangleButton_Click(object sender, RoutedEventArgs e)
         {
-            curFigure = new  (canvas, color, startPoint, endPoint);
+            for (int i=0; i<AdditionalFigList.Count; i++)
+            {
+                if ((sender as Button).Name == "B"+AdditionalFigList[i].typeName)
+                {
+                    curFigure = AdditionalFigList[i];
+                }
+            }
         }
-        */
+
         private void BSquare_Click(object sender, RoutedEventArgs e)
         {
             curFigure = new Square(canvas, color, startPoint, endPoint);
@@ -91,22 +103,6 @@ namespace GraphicEditor
         private void BEllipse_Click(object sender, RoutedEventArgs e)
         {
             curFigure = new Ellipse(canvas, color, startPoint, endPoint);
-        }
-
-        private void BCancel_Click(object sender, RoutedEventArgs e)
-        {
-            if (canvas.Children.Count != 0)
-            {
-                canvas.Children.Remove(canvas.Children[canvas.Children.Count - 1]);
-            }
-            if (ListBoxOfFigures.Items.Count != 0)
-            {
-                ListBoxOfFigures.Items.Remove(ListBoxOfFigures.Items[ListBoxOfFigures.Items.Count - 1]);
-            }
-            if (listOfFigures.Count != 0)
-            {
-                listOfFigures.Remove(listOfFigures[listOfFigures.Count - 1]);
-            }
         }
 
         private void BClear_Click(object sender, RoutedEventArgs e)
@@ -132,7 +128,7 @@ namespace GraphicEditor
             return HitTestResultBehavior.Stop;
         }
 
-        private void DrawAnyFigure(Figure curFigure, Point startPoint, Point endPoint)
+        private void DrawAnyFigure(Figure curFigure, Color color, Point startPoint, Point endPoint)
         {
             curFigure = (Figure)Activator.CreateInstance(curFigure.GetType(), canvas, color, startPoint, endPoint);
             curFigure.Draw(canvas);
@@ -147,7 +143,7 @@ namespace GraphicEditor
             endPoint = e.GetPosition(CanvasMain);
             if (curFigure != null)
             {
-                DrawAnyFigure(curFigure, startPoint, endPoint);
+                DrawAnyFigure(curFigure, color, startPoint, endPoint);
             }
             else
             {
@@ -193,7 +189,6 @@ namespace GraphicEditor
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog()
             {
-                InitialDirectory = "C:\\Projects\\ООП\\CoolPaint",
                 Filter = "JSON Files (*.json)|*.json|All files (*.*)|*.*",
                 FilterIndex = 0
             };
@@ -225,14 +220,7 @@ namespace GraphicEditor
                     var figures = JsonConvert.DeserializeObject<List<Figure>>(json, settings);
                     foreach (Figure figure in figures)
                     {
-                        //   Figure nextFigure;
-                        //   nextFigure = (Figure)Activator.CreateInstance(figure.GetType(), canvas, figure.color, figure.startPoint, figure.endPoint);
-                        //   nextFigure.Draw(canvas);
-                        /*
-                        figure.Draw(canvas);    
-                        listOfFigures.Add(figure);
-                        ListBoxOfFigures.Items.Add(figure.typeName);*/
-                        DrawAnyFigure(figure, figure.startPoint, figure.endPoint);
+                        DrawAnyFigure(figure, figure.color, figure.startPoint, figure.endPoint);
                     }
                 }
             }
@@ -248,8 +236,6 @@ namespace GraphicEditor
                 listOfFigures.Remove(listOfFigures[selectedIndex]);
              }
         }
-
-      
 
         private void BChange_Click(object sender, RoutedEventArgs e)
         {
