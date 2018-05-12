@@ -62,7 +62,6 @@
     <Compile Include="Ellipse.cs" />
     <Compile Include="Rectangle.cs" />
     <Compile Include="Square.cs" />
-    <Compile Include="Triangle.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -104,6 +103,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TriangleInterfaceLib\TriangleInterfaceLib.csproj">
+      <Project>{09a124c1-dd9c-4c14-b93b-3b7e0db135b5}</Project>
+      <Name>TriangleInterfaceLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

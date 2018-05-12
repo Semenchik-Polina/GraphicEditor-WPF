@@ -7,7 +7,6 @@ using System.Windows.Media;
 using System.Windows;
 using System.Windows.Shapes;
 using System.Windows.Controls;
-using Newtonsoft.Json;
 
 namespace GraphicEditor
 {
@@ -16,7 +15,6 @@ namespace GraphicEditor
         public Color color;
         public Point startPoint;
         public Point endPoint;
-    //    [DataMember]
         protected Path path;
         protected Canvas canvas;
         public string typeName;
@@ -34,9 +32,5 @@ namespace GraphicEditor
 
         public abstract void Draw(Canvas canvas);
 
-        ~Figure()
-        {
-            //   pen.Dispose();
-        }
     }
 }

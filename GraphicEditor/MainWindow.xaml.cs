@@ -16,6 +16,8 @@ using System.Windows.Shapes;
 using Microsoft.Win32;
 using System.IO;
 using Newtonsoft.Json;
+using System.Reflection;
+using TriangleInterfaceLib;
 
 namespace GraphicEditor
 {
@@ -43,9 +45,34 @@ namespace GraphicEditor
 
         private void BTriangle_Click(object sender, RoutedEventArgs e)
         {
-            curFigure = new Triangle(canvas, color, startPoint, endPoint);
+            String LibName = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "TriangleLib.dll");
+            if (!File.Exists(LibName)) { Console.Write("File not found"); return; }
+            ///Загружаем сборку
+            Assembly libAssembly = Assembly.LoadFrom(LibName);
+            BTriangle.IsEnabled = false;
+            ///в цикле проходим по всем public-типам сборки
+            foreach (Type t in libAssembly.GetExportedTypes())
+            {
+                if (t.IsClass && typeof(ITriangle).IsAssignableFrom(t))
+                {
+                    ///создаем объект полученного класса
+                //    ITriangle triangle = (ITriangle)Activator.CreateInstance(t, canvas, color, startPoint, endPoint);
+                    ///вызываем его метод GetAboutText
+                    MessageBox.Show("!");
+                    Button TriangleButton = new Button();
+                    TriangleButton.Name = t.Name;
+           //         typeList.Add(t);
+           //         TriangleButton.Click +=
+                    
+                }
+            }
         }
 
+     /*   private void IsoTriangleButton_Click(object sender, RoutedEventArgs e)
+        {
+            curFigure = new  (canvas, color, startPoint, endPoint);
+        }
+        */
         private void BSquare_Click(object sender, RoutedEventArgs e)
         {
             curFigure = new Square(canvas, color, startPoint, endPoint);
@@ -75,7 +102,6 @@ namespace GraphicEditor
             if (ListBoxOfFigures.Items.Count != 0)
             {
                 ListBoxOfFigures.Items.Remove(ListBoxOfFigures.Items[ListBoxOfFigures.Items.Count - 1]);
-
             }
             if (listOfFigures.Count != 0)
             {
@@ -106,28 +132,37 @@ namespace GraphicEditor
             return HitTestResultBehavior.Stop;
         }
 
+        private void DrawAnyFigure(Figure curFigure, Point startPoint, Point endPoint)
+        {
+            curFigure = (Figure)Activator.CreateInstance(curFigure.GetType(), canvas, color, startPoint, endPoint);
+            curFigure.Draw(canvas);
+            listOfFigures.Add(curFigure);
+            ListBoxItem item = new ListBoxItem();
+            item.Content = curFigure.typeName;
+            ListBoxOfFigures.Items.Add(item);
+        }
+
         private void CanvasMain_MouseUp(object sender, MouseButtonEventArgs e)
         {
             endPoint = e.GetPosition(CanvasMain);
             if (curFigure != null)
             {
-                curFigure = (Figure)Activator.CreateInstance(curFigure.GetType(), canvas, color, startPoint, endPoint);
-                curFigure.Draw(canvas);
-                listOfFigures.Add(curFigure);
-                ListBoxItem item = new ListBoxItem();
-                item.Content = curFigure.typeName;
-                ListBoxOfFigures.Items.Add(item);
+                DrawAnyFigure(curFigure, startPoint, endPoint);
             }
             else
             {
-                Figure tempFigure;
-                tempFigure = listOfFigures[ListBoxOfFigures.SelectedIndex];
-                tempFigure.startPoint.X += endPoint.X - startPoint.X;
-                tempFigure.startPoint.Y += endPoint.Y - startPoint.Y;
-                tempFigure.endPoint.X += endPoint.X - startPoint.X;
-                tempFigure.endPoint.Y += endPoint.Y - startPoint.Y;
-                tempFigure.Draw(canvas);
+                MoveFigure(listOfFigures[ListBoxOfFigures.SelectedIndex], startPoint, endPoint);
             }
+        }
+
+        private void MoveFigure(Figure figure, Point startPoint, Point endPoint)
+        {
+            figure = listOfFigures[ListBoxOfFigures.SelectedIndex];
+            figure.startPoint.X += endPoint.X - startPoint.X;
+            figure.startPoint.Y += endPoint.Y - startPoint.Y;
+            figure.endPoint.X += endPoint.X - startPoint.X;
+            figure.endPoint.Y += endPoint.Y - startPoint.Y;
+            figure.Draw(canvas);
         }
     
         private void CanvasMain_MouseDown(object sender, MouseButtonEventArgs e)
@@ -152,17 +187,6 @@ namespace GraphicEditor
             }
         }
 
-        private void CanvasMain_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (curFigure != null) { }
-            else
-            {
-                ScaleTransform scaleTransform = new ScaleTransform();
-         //       scaleTransform.ScaleX = mou
-            }
-        }
-
-
         readonly JsonSerializerSettings settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All };
 
         private void BSave_Click(object sender, RoutedEventArgs e)
@@ -175,7 +199,7 @@ namespace GraphicEditor
             };
             if (saveFileDialog.ShowDialog() == true)
             {
-                using (FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.OpenOrCreate | FileMode.Truncate))
+                using (FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.OpenOrCreate))
                 {
                     var json = JsonConvert.SerializeObject(listOfFigures, Formatting.None, settings);
                     var writeStream = new StreamWriter(fs);
@@ -193,26 +217,25 @@ namespace GraphicEditor
                 Filter = "JSON Files (*.json)|*.json|All files (*.*)|*.*",
                 FilterIndex = 0
             };
-             if (openFileDialog.ShowDialog() == true)
+            if (openFileDialog.ShowDialog() == true)
             {
                 using (var fStream = File.OpenRead(openFileDialog.FileName))
                 {
                     var json = new StreamReader(fStream).ReadToEnd();
                     var figures = JsonConvert.DeserializeObject<List<Figure>>(json, settings);
-                    canvas.InvalidateVisual();
                     foreach (Figure figure in figures)
                     {
-                        figure.Draw(canvas);
-                     //   curFigure = (Figure)Activator.CreateInstance(figure.GetType(), canvas, figure.color, figure.StartPoint, figure.ndPoint);
-                     //   curFigure.Draw(canvas);
-               
+                        //   Figure nextFigure;
+                        //   nextFigure = (Figure)Activator.CreateInstance(figure.GetType(), canvas, figure.color, figure.startPoint, figure.endPoint);
+                        //   nextFigure.Draw(canvas);
+                        /*
+                        figure.Draw(canvas);    
                         listOfFigures.Add(figure);
-                        ListBoxOfFigures.Items.Add(figure.typeName);
+                        ListBoxOfFigures.Items.Add(figure.typeName);*/
+                        DrawAnyFigure(figure, figure.startPoint, figure.endPoint);
                     }
-                    canvas.InvalidateVisual();
                 }
             }
-            canvas.InvalidateVisual();
         }
 
         private void BRemove_Click(object sender, RoutedEventArgs e)

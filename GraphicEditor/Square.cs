@@ -24,10 +24,10 @@ namespace GraphicEditor
             get {
                 if (startPoint.Y > endPoint.Y)
                 {
-                    Point temp = new Point();
-                    temp = endPoint;
-                    endPoint = startPoint;
-                    startPoint = temp;
+                    double temp;
+                    temp = endPoint.Y;
+                    endPoint.Y = startPoint.Y;
+                    startPoint.Y = temp;
                 }
                 return endPoint.Y - startPoint.Y;
             }

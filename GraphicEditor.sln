@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphicEditor", "GraphicEditor\GraphicEditor.csproj", "{DA8E69AA-C051-462A-A379-83AD44563280}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TriangleInterfaceLib", "TriangleInterfaceLib\TriangleInterfaceLib.csproj", "{09A124C1-DD9C-4C14-B93B-3B7E0DB135B5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TriangleLib", "TriangleLib\TriangleLib.csproj", "{C16D4E67-73D9-4DB7-B18E-8DCDFF00480A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{DA8E69AA-C051-462A-A379-83AD44563280}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA8E69AA-C051-462A-A379-83AD44563280}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA8E69AA-C051-462A-A379-83AD44563280}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09A124C1-DD9C-4C14-B93B-3B7E0DB135B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09A124C1-DD9C-4C14-B93B-3B7E0DB135B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09A124C1-DD9C-4C14-B93B-3B7E0DB135B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09A124C1-DD9C-4C14-B93B-3B7E0DB135B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C16D4E67-73D9-4DB7-B18E-8DCDFF00480A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C16D4E67-73D9-4DB7-B18E-8DCDFF00480A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C16D4E67-73D9-4DB7-B18E-8DCDFF00480A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C16D4E67-73D9-4DB7-B18E-8DCDFF00480A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
