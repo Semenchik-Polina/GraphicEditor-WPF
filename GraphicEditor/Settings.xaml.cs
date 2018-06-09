@@ -24,34 +24,53 @@ namespace GraphicEditor
     public partial class Settings : Window
     {
     //    string sAttr;
-        public string themeColor;
+        private string themeColor;
         private XmlDocument xd;
         private string language;
         private const string configPass = "C:\\all you need is\\to study\\ООП\\wpf\\GraphicEditor-WPF\\GraphicEditor\\App.config";
+        MainWindow mainWindow;
 
         public Settings()
         {
             InitializeComponent();
+            mainWindow = new MainWindow();
             xd = new XmlDocument();
-            xd.Load(configPass);
+            try
+            {
+                xd.Load(configPass);
+                XmlNode node = xd.SelectSingleNode("//setting[@name = 'Theme']");
+                if (node != null)
+                    themeColor = node.InnerText;
+                node = xd.SelectSingleNode("//setting[@name = 'Language']");
+                if (node != null)
+                    language = node.InnerText;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                language = "en";
+                themeColor = "gray";
+            }
+            ChangeLanguage();
+            Background = new SolidColorBrush(mainWindow.themes[themeColor]);
         }
 
         private void Gray_Checked(object sender, RoutedEventArgs e)
         {
-            this.Background = new SolidColorBrush(Color.FromRgb(200, 200, 200));
             themeColor = "gray";
+            Background = new SolidColorBrush(mainWindow.themes[themeColor]);
         }
 
         private void Blue_Checked(object sender, RoutedEventArgs e)
         {
             themeColor = "blue";
-            this.Background = new SolidColorBrush(Color.FromRgb(202, 225, 250));
+            Background = new SolidColorBrush(mainWindow.themes[themeColor]);
         }
 
         private void Pink_Checked(object sender, RoutedEventArgs e)
         {
             themeColor = "pink";
-            this.Background = new SolidColorBrush(Color.FromRgb(243, 225, 250));
+            Background = new SolidColorBrush(mainWindow.themes[themeColor]);
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
@@ -69,11 +88,36 @@ namespace GraphicEditor
         private void RBEnLang_Click(object sender, RoutedEventArgs e)
         {
             language = "en";
+            ChangeLanguage();
         }
 
         private void RBRuLang_Click(object sender, RoutedEventArgs e)
         {
             language = "ru";
+            ChangeLanguage();
+        }
+
+        private void ChangeLanguage()
+        {
+            switch (language)
+            {
+                case "en":
+                    RBBlue.Content = "Blue";
+                    RBGray.Content = "Gray";
+                    RBPink.Content = "Pink";
+                    LTheme.Content = "Theme";
+                    LLanguage.Content = "Language";
+                    BSave.Content = "Save";
+                    break;
+                case "ru":
+                    RBBlue.Content = "Синяя";
+                    RBGray.Content = "Серая";
+                    RBPink.Content = "Розовая";
+                    LTheme.Content = "Тема";
+                    LLanguage.Content = "Язык";
+                    BSave.Content = "Сохранить";
+                    break;
+            }
         }
     }
 }

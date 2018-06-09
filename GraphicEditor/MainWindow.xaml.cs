@@ -27,30 +27,39 @@ namespace GraphicEditor
     {
         protected List<Figure> listOfFigures = new List<Figure>();
         public List<Visual> hitList;
-        private List<Figure> AdditionalFigList, basicFigures;
+        private List<Figure> additionalFigList, basicFigures;
         public Figure curFigure;
         public Color color = Color.FromRgb(0,0,0);
         protected Point startPoint, endPoint;
         public Canvas canvas;
-        public string lang = "en";
-  //      public XDocument xDoc = XDocument.Load("../../App.config");
-
+        private string themeColor, lang;
+        private const string configPass = "C:\\all you need is\\to study\\ООП\\wpf\\GraphicEditor-WPF\\GraphicEditor\\App.config";
+        public Dictionary<string, Color> themes = new Dictionary<string, Color>();
 
         public MainWindow()
         {
             InitializeComponent();
+            themes.Add("gray", Color.FromRgb(200, 200, 200));
+            themes.Add("blue", Color.FromRgb(202, 225, 250));
+            themes.Add("pink", Color.FromRgb(243, 225, 250));
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            this.Background = new SolidColorBrush(Color.FromRgb(200, 200, 200));
-            this.color = Color.FromRgb(255, 255, 255);
-
-            color = Color.FromRgb(0, 0, 0);
+            basicFigures = new List<Figure>();
             curFigure = new Line(canvas, color, startPoint, endPoint);
             canvas = CanvasMain;
             hitList = new List<Visual>();
-            basicFigures = new List<Figure>();
+            additionalFigList = new List<Figure>();
+
+            ReadConfig();
+            DrawBasicButtons();
+
+            Background = new SolidColorBrush(themes[themeColor]);        
+        }
+
+        private void DrawBasicButtons ()
+        {
             string nspace = "GraphicEditor";
             IEnumerable<Type> Types = from t in Assembly.GetExecutingAssembly().GetTypes()
                                       where t.IsClass && t.Namespace == nspace && t.IsSubclassOf(typeof(Figure))
@@ -64,7 +73,38 @@ namespace GraphicEditor
                 figureButton.Click += FigureButton_Click;
                 ShapesPanel.Children.Add(figureButton);
             }
+        }
 
+        public void ReadConfig()
+        {
+            XmlDocument xd = new XmlDocument();
+            try
+            {
+                xd.Load(configPass);
+                XmlNode node = xd.SelectSingleNode("//setting[@name = 'Theme']");
+                if (node != null)
+                    themeColor = node.InnerText;
+                node = xd.SelectSingleNode("//setting[@name = 'Language']");
+                if (node != null)
+                    lang = node.InnerText;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                lang = "en";
+                themeColor = "gray";
+            }
+            ChangeLanguage();
+            ChangeTheme();
+        }
+
+        public void ChangeTheme()
+        {
+            Background = new SolidColorBrush(themes[themeColor]);
+        }
+
+            public void ChangeLanguage()
+        {
             switch (lang)
             {
                 case "en":
@@ -99,7 +139,7 @@ namespace GraphicEditor
 
         private void BLoadFigures_Click(object sender, RoutedEventArgs e)
         {
-            AdditionalFigList = new List<Figure>();
+            additionalFigList = new List<Figure>();
             OpenFileDialog openFileDialog = new OpenFileDialog()
             {
                 Filter = "dll Files (*.dll)|*.dll|All files (*.*)|*.*",
@@ -115,7 +155,7 @@ namespace GraphicEditor
                     if (t.IsClass && typeof(ITriangle).IsAssignableFrom(t))
                     {
                         Figure triangle = (Figure)Activator.CreateInstance(t, canvas, color, startPoint, endPoint);
-                        AdditionalFigList.Add((Figure)triangle);
+                        additionalFigList.Add((Figure)triangle);
                         Button triangleButton = new Button();
                         triangleButton = triangle.MakeButton(lang);
                         triangleButton.Click += TriangleButton_Click;
@@ -127,11 +167,11 @@ namespace GraphicEditor
 
         private void TriangleButton_Click(object sender, RoutedEventArgs e)
         {
-            for (int i=0; i<AdditionalFigList.Count; i++)
+            for (int i=0; i<additionalFigList.Count; i++)
             {
-                if ((sender as Button).Name == "B"+AdditionalFigList[i].typeName)
+                if ((sender as Button).Name == "B"+additionalFigList[i].typeName)
                 {
-                    curFigure = AdditionalFigList[i];
+                    curFigure = additionalFigList[i];
                 }
             }
         }
@@ -160,7 +200,10 @@ namespace GraphicEditor
             curFigure.Draw(canvas);
             listOfFigures.Add(curFigure);
             ListBoxItem item = new ListBoxItem();
-            item.Content = curFigure.typeName;
+            if (lang == "ru")
+                item.Content = curFigure.typeNameRu;
+            else
+                item.Content = curFigure.typeName;
             ListBoxOfFigures.Items.Add(item);
         }
 
@@ -273,7 +316,32 @@ namespace GraphicEditor
         private void BSettings_Click(object sender, RoutedEventArgs e)
         {
             GraphicEditor.Settings settings = new GraphicEditor.Settings();
-            settings.Show();
+            settings.Owner = this;
+            settings.ShowDialog();
+            ReadConfig();
+            for (int i = basicFigures.Count + additionalFigList.Count; i > 0; i--)
+            {
+                ShapesPanel.Children.Remove(ShapesPanel.Children[i]);
+            }
+            foreach (Figure fig in basicFigures)
+            {
+                Button figureButton = new Button();
+                figureButton = fig.MakeButton(lang);
+                figureButton.Click += FigureButton_Click;
+                ShapesPanel.Children.Add(figureButton);
+            }
+            foreach (Figure fig in additionalFigList)
+            {
+                Button figureButton = new Button();
+                figureButton = fig.MakeButton(lang);
+                figureButton.Click += FigureButton_Click;
+                ShapesPanel.Children.Add(figureButton);
+            }
+      /*      for (int i = 0; i < ListBoxOfFigures.Items.Count; i++)
+            {
+                if (lang == "en")
+                    ListBoxOfFigures.Items[i] = 
+            }*/
         }
 
         private void BChange_Click(object sender, RoutedEventArgs e)

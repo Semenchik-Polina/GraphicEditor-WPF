@@ -20,7 +20,18 @@ namespace GraphicEditor
         protected Canvas canvas;
         public string typeName;
         public string typeNameRu;
-            
+    //    public string lang;
+
+     /*   public string TypeName
+        { get
+            {
+                if (this.lang == "en")
+                    return typeName;
+                else
+                    return typeNameRu;
+            }
+        }
+       */     
         public Figure(Canvas canvas, Color color, Point startPoint, Point endPoint)
         {
             path = new Path();

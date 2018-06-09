@@ -8,15 +8,14 @@
         Title="Settings" ResizeMode="NoResize" Height="350" Width="200" TextElement.FontSize="20px">
     <Grid>
         <StackPanel>
-            <Label Name="Theme">Theme</Label>
-            <RadioButton Name="Gray" IsChecked="True" Checked="Gray_Checked">Gray</RadioButton>
-            <RadioButton Name="Blue" Checked="Blue_Checked">Blue</RadioButton>
-            <RadioButton Name="Pink" Checked ="Pink_Checked">Pink</RadioButton>
-            <Label Name="Language">Language</Label>
-            <RadioButton Name="RBEnLang" Click="RBEnLang_Click"  VerticalAlignment="Bottom" IsChecked="True">English</RadioButton>
+            <Label Name="LTheme"></Label>
+            <RadioButton Name="RBGray" Checked="Gray_Checked"></RadioButton>
+            <RadioButton Name="RBBlue" Checked="Blue_Checked"></RadioButton>
+            <RadioButton Name="RBPink" Checked ="Pink_Checked"></RadioButton>
+            <Label Name="LLanguage"></Label>
+            <RadioButton Name="RBEnLang" Click="RBEnLang_Click"  VerticalAlignment="Bottom">English</RadioButton>
             <RadioButton Name="RBRuLang" Click="RBRuLang_Click"  VerticalAlignment="Bottom">Русский</RadioButton>
-
-            <Button Name="Save" Width="90" Click="Save_Click">Save</Button>
+            <Button Name="BSave" Width="90" Click="Save_Click"></Button>
         </StackPanel>
     </Grid>
 </Window>
