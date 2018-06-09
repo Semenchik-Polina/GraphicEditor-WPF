@@ -1,0 +1,22 @@
+﻿<Window x:Class="GraphicEditor.Settings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GraphicEditor"
+        mc:Ignorable="d"
+        Title="Settings" ResizeMode="NoResize" Height="350" Width="200" TextElement.FontSize="20px">
+    <Grid>
+        <StackPanel>
+            <Label Name="Theme">Theme</Label>
+            <RadioButton Name="Gray" IsChecked="True" Checked="Gray_Checked">Gray</RadioButton>
+            <RadioButton Name="Blue" Checked="Blue_Checked">Blue</RadioButton>
+            <RadioButton Name="Pink" Checked ="Pink_Checked">Pink</RadioButton>
+            <Label Name="Language">Language</Label>
+            <RadioButton Name="RBEnLang" Click="RBEnLang_Click"  VerticalAlignment="Bottom" IsChecked="True">English</RadioButton>
+            <RadioButton Name="RBRuLang" Click="RBRuLang_Click"  VerticalAlignment="Bottom">Русский</RadioButton>
+
+            <Button Name="Save" Width="90" Click="Save_Click">Save</Button>
+        </StackPanel>
+    </Grid>
+</Window>

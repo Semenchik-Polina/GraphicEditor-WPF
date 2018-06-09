@@ -19,6 +19,7 @@ using Newtonsoft.Json;
 using System.Reflection;
 using TriangleInterfaceLib;
 using System.Xml.Linq;
+using System.Xml;
 
 namespace GraphicEditor
 {
@@ -31,29 +32,20 @@ namespace GraphicEditor
         public Color color = Color.FromRgb(0,0,0);
         protected Point startPoint, endPoint;
         public Canvas canvas;
-        public string lang;
-        public XDocument xDoc = XDocument.Load("../../App.config");
+        public string lang = "en";
+  //      public XDocument xDoc = XDocument.Load("../../App.config");
 
 
         public MainWindow()
         {
             InitializeComponent();
-            lang = "en";
-        }
-
-        private void FigureButton_Click(object sender, RoutedEventArgs e)
-        {
-            for (int i = 0; i < basicFigures.Count; i++)
-            {
-                if ((sender as Button).Name == "B" + basicFigures[i].typeName)
-                {
-                    curFigure = basicFigures[i];
-                }
-            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            this.Background = new SolidColorBrush(Color.FromRgb(200, 200, 200));
+            this.color = Color.FromRgb(255, 255, 255);
+
             color = Color.FromRgb(0, 0, 0);
             curFigure = new Line(canvas, color, startPoint, endPoint);
             canvas = CanvasMain;
@@ -73,10 +65,39 @@ namespace GraphicEditor
                 ShapesPanel.Children.Add(figureButton);
             }
 
-            //            this.BCircle.Background = new SolidColorBrush(Color.FromArgb(0, 200, 200, 200));
+            switch (lang)
+            {
+                case "en":
+                    BClear.Content = "Clear";
+                    BChange.Content = "Move";
+                    BSave.Content = "Save";
+                    BLoad.Content = "Load";
+                    BRemove.Content = "Remove";
+                    BLoadFigures.Content = "Load figures";
+                    break;
+                case "ru":
+                    BClear.Content = "Очистить";
+                    BChange.Content = "Передвинуть";
+                    BSave.Content = "Сохранить";
+                    BLoad.Content = "Загрузить";
+                    BRemove.Content = "Удалить";
+                    BLoadFigures.Content = "Загрузить фигуры";
+                    break;
+            }
         }
 
-        private void BTriangle_Click(object sender, RoutedEventArgs e)
+        private void FigureButton_Click(object sender, RoutedEventArgs e)
+        {
+            for (int i = 0; i < basicFigures.Count; i++)
+            {
+                if ((sender as Button).Name == "B" + basicFigures[i].typeName)
+                {
+                    curFigure = basicFigures[i];
+                }
+            }
+        }
+
+        private void BLoadFigures_Click(object sender, RoutedEventArgs e)
         {
             AdditionalFigList = new List<Figure>();
             OpenFileDialog openFileDialog = new OpenFileDialog()
@@ -208,7 +229,7 @@ namespace GraphicEditor
             {
                 using (FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.OpenOrCreate))
                 {
-                    var json = JsonConvert.SerializeObject(listOfFigures, Formatting.None, settings);
+                    var json = JsonConvert.SerializeObject(listOfFigures, Newtonsoft.Json.Formatting.None, settings);
                     var writeStream = new StreamWriter(fs);
                     writeStream.Write(json);
                     writeStream.Flush();
@@ -253,18 +274,6 @@ namespace GraphicEditor
         {
             GraphicEditor.Settings settings = new GraphicEditor.Settings();
             settings.Show();
-   //         GraphicEditor.Settings WSettings = new GraphicEditor.Settings();
-     //       WSettings.Show();
-        }
-
-        private void RBEnLang_Click(object sender, RoutedEventArgs e)
-        {
-            lang = "en";
-        }
-
-        private void RBRuLang_Click(object sender, RoutedEventArgs e)
-        {
-            lang = "ru";
         }
 
         private void BChange_Click(object sender, RoutedEventArgs e)
