@@ -15,6 +15,7 @@ namespace GraphicEditor
         public Square(Canvas canvas, Color color, Point startPoint, Point endPoint) : base(canvas, color, startPoint, endPoint)
         {
             typeName = "Square";
+            typeNameRu = "Квадрат";
         }
 
         protected Size size;
@@ -45,7 +46,9 @@ namespace GraphicEditor
                 canvas.Children.Add(path);
             }
             catch
-            { }
+            {
+                MessageBox.Show("error with drawing");
+            }
         }
     }
 }

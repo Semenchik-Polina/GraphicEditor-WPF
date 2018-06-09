@@ -15,6 +15,7 @@ namespace GraphicEditor
         public Rectangle(Canvas canvas, Color color, Point startPoint, Point endPoint):base (canvas, color, startPoint, endPoint)
         {
             typeName = "Rectangle";
+            typeNameRu = "Прямоугольник";
         }
 
         protected double Width
@@ -43,7 +44,9 @@ namespace GraphicEditor
                 canvas.Children.Add(path);
             }
             catch
-            { }
+            {
+                MessageBox.Show("error with drawing");
+            }
         }
 
     }

@@ -18,6 +18,7 @@ using System.IO;
 using Newtonsoft.Json;
 using System.Reflection;
 using TriangleInterfaceLib;
+using System.Xml.Linq;
 
 namespace GraphicEditor
 {
@@ -25,14 +26,30 @@ namespace GraphicEditor
     {
         protected List<Figure> listOfFigures = new List<Figure>();
         public List<Visual> hitList;
+        private List<Figure> AdditionalFigList, basicFigures;
         public Figure curFigure;
         public Color color = Color.FromRgb(0,0,0);
         protected Point startPoint, endPoint;
         public Canvas canvas;
+        public string lang;
+        public XDocument xDoc = XDocument.Load("../../App.config");
+
 
         public MainWindow()
         {
             InitializeComponent();
+            lang = "en";
+        }
+
+        private void FigureButton_Click(object sender, RoutedEventArgs e)
+        {
+            for (int i = 0; i < basicFigures.Count; i++)
+            {
+                if ((sender as Button).Name == "B" + basicFigures[i].typeName)
+                {
+                    curFigure = basicFigures[i];
+                }
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -41,10 +58,24 @@ namespace GraphicEditor
             curFigure = new Line(canvas, color, startPoint, endPoint);
             canvas = CanvasMain;
             hitList = new List<Visual>();
+            basicFigures = new List<Figure>();
+            string nspace = "GraphicEditor";
+            IEnumerable<Type> Types = from t in Assembly.GetExecutingAssembly().GetTypes()
+                                      where t.IsClass && t.Namespace == nspace && t.IsSubclassOf(typeof(Figure))
+                                      select t;
+            foreach (Type t in Types)
+            {
+                Figure figureType = (Figure)Activator.CreateInstance(t, canvas, color, startPoint, endPoint);
+                basicFigures.Add((Figure)figureType);
+                Button figureButton = new Button();
+                figureButton = figureType.MakeButton(lang);
+                figureButton.Click += FigureButton_Click;
+                ShapesPanel.Children.Add(figureButton);
+            }
+
+            //            this.BCircle.Background = new SolidColorBrush(Color.FromArgb(0, 200, 200, 200));
         }
 
-        private List<Figure> AdditionalFigList;
-       
         private void BTriangle_Click(object sender, RoutedEventArgs e)
         {
             AdditionalFigList = new List<Figure>();
@@ -56,19 +87,18 @@ namespace GraphicEditor
             if (openFileDialog.ShowDialog() == true)
             {
                 Assembly libAssembly = Assembly.LoadFrom(openFileDialog.FileName);
-                BTriangle.IsEnabled = false;
+                //BTriangle.IsEnabled = false;
+                //BTriangle.Content = "UnLoad triangles";
                 foreach (Type t in libAssembly.GetExportedTypes())
                 {
                     if (t.IsClass && typeof(ITriangle).IsAssignableFrom(t))
                     {
-                        ITriangle triangle = (ITriangle)Activator.CreateInstance(t, canvas, color, startPoint, endPoint);
+                        Figure triangle = (Figure)Activator.CreateInstance(t, canvas, color, startPoint, endPoint);
                         AdditionalFigList.Add((Figure)triangle);
                         Button triangleButton = new Button();
-                        triangleButton = triangle.MakeButton();
+                        triangleButton = triangle.MakeButton(lang);
                         triangleButton.Click += TriangleButton_Click;
                         ShapesPanel.Children.Add(triangleButton);
-
-            //            ShapesPanel.Children.
                     }
                 }
             }
@@ -85,36 +115,11 @@ namespace GraphicEditor
             }
         }
 
-        private void BSquare_Click(object sender, RoutedEventArgs e)
-        {
-            curFigure = new Square(canvas, color, startPoint, endPoint);
-        }
-
-        private void BRectangle_Click(object sender, RoutedEventArgs e)
-        {
-            curFigure = new Rectangle(canvas, color, startPoint, endPoint);
-        }
-
-        private void BCircle_Click(object sender, RoutedEventArgs e)
-        {
-            curFigure = new Circle(canvas, color, startPoint, endPoint);
-        }
-
-        private void BEllipse_Click(object sender, RoutedEventArgs e)
-        {
-            curFigure = new Ellipse(canvas, color, startPoint, endPoint);
-        }
-
         private void BClear_Click(object sender, RoutedEventArgs e)
         {
             listOfFigures.Clear();
             canvas.Children.Clear();
             ListBoxOfFigures.Items.Clear();
-        }
-
-        private void BLine_Click(object sender, RoutedEventArgs e)
-        {
-            curFigure = new Line(CanvasMain, color, startPoint, endPoint);
         }
 
         public HitTestResultBehavior HitTestResultHandler(HitTestResult result)
@@ -147,7 +152,14 @@ namespace GraphicEditor
             }
             else
             {
-                MoveFigure(listOfFigures[ListBoxOfFigures.SelectedIndex], startPoint, endPoint);
+                try
+                {
+                    MoveFigure(listOfFigures[ListBoxOfFigures.SelectedIndex], startPoint, endPoint);
+                }
+                catch
+                {
+                    MessageBox.Show("No shape found");
+                }
             }
         }
 
@@ -235,6 +247,24 @@ namespace GraphicEditor
                 ListBoxOfFigures.Items.Remove(ListBoxOfFigures.Items[selectedIndex]);
                 listOfFigures.Remove(listOfFigures[selectedIndex]);
              }
+        }
+
+        private void BSettings_Click(object sender, RoutedEventArgs e)
+        {
+            GraphicEditor.Settings settings = new GraphicEditor.Settings();
+            settings.Show();
+   //         GraphicEditor.Settings WSettings = new GraphicEditor.Settings();
+     //       WSettings.Show();
+        }
+
+        private void RBEnLang_Click(object sender, RoutedEventArgs e)
+        {
+            lang = "en";
+        }
+
+        private void RBRuLang_Click(object sender, RoutedEventArgs e)
+        {
+            lang = "ru";
         }
 
         private void BChange_Click(object sender, RoutedEventArgs e)

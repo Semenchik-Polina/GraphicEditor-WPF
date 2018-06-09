@@ -14,25 +14,25 @@
             <ColumnDefinition Width="auto"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <StackPanel Name="ShapesPanel" Grid.Column="0" HorizontalAlignment="Left" Margin="0,0,0,0.4" Width="140">
-            <Button Name="BLine" Click="BLine_Click">Line</Button>
-            <Button Name="BSquare" Click="BSquare_Click">Square</Button>
-            <Button Name="BRectangle" Click="BRectangle_Click">Rectangle</Button>
-            <Button Name="BCircle" Click="BCircle_Click">Circle</Button>
-            <Button Name="BEllipse" Click="BEllipse_Click">Ellipse</Button>
-            <Button Name="BTriangle" Click="BTriangle_Click">Load Triangles</Button>
+            <Button Name="BTriangle" Click="BTriangle_Click">Load figures</Button>
         </StackPanel>
         <StackPanel Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,0.4" Width="140">
-           <Button Name="BChange" Click="BChange_Click">Move</Button>
+            <Button Name="BChange" Click="BChange_Click">Move</Button>
             <Button Name="BSave" Click="BSave_Click">Save</Button>
             <Button Name="BLoad" Click="BLoad_Click">Load</Button>
             <Button Name="BRemove" Click="BRemove_Click">Remove</Button>
             <Button Name="BClear" Click="BClear_Click">Clear</Button>
         </StackPanel>
-        <StackPanel Grid.Column="2" VerticalAlignment="Top" Margin="0,0,0,0.4" Width="140">
+        <StackPanel Grid.Column="2" VerticalAlignment="Top"  Margin="0,0,0,0.4" Width="140">
             <ListBox Name="ListBoxOfFigures" ScrollViewer.VerticalScrollBarVisibility="Visible">
             </ListBox>
         </StackPanel>
-        <Canvas Grid.Column="1" Background="Beige" x:Name="CanvasMain" ClipToBounds="True" MouseDown="CanvasMain_MouseDown" MouseUp="CanvasMain_MouseUp"/>
+        <StackPanel Grid.Column="2" VerticalAlignment="Bottom"  Margin="0,0,0,0.4" Width="140">
+            <RadioButton Name="RBEnLang" Click="RBEnLang_Click" VerticalAlignment="Bottom" IsChecked="True">English</RadioButton>
+            <RadioButton Name="RBRuLang" Click="RBRuLang_Click" VerticalAlignment="Bottom">Russian</RadioButton>
+            <Button Name="BSettings" Click="BSettings_Click" VerticalAlignment="Bottom">Settings</Button>
+        </StackPanel>
+        <Canvas Grid.Column="1" Background="Transparent" x:Name="CanvasMain" ClipToBounds="True" MouseDown="CanvasMain_MouseDown" MouseUp="CanvasMain_MouseUp"/>
 
     </Grid>
 </Window>

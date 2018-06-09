@@ -15,6 +15,7 @@ namespace GraphicEditor
         public Circle(Canvas canvas, Color color, Point startPoint, Point endPoint) : base(canvas, color, startPoint, endPoint)
         {
             typeName = "Circle";
+            typeNameRu = "Круг";
         }
 
         public override void Draw(Canvas canvas)
@@ -27,9 +28,12 @@ namespace GraphicEditor
             try
             {
                 canvas.Children.Add(path);
+                canvas.InvalidateVisual();
             }
             catch
-            { }
+            {
+                MessageBox.Show("error with drawing");
+            }
         }
     }
 }

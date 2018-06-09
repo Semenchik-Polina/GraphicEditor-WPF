@@ -16,6 +16,7 @@ namespace GraphicEditor
         public Line(Canvas canvas, Color color, Point startPoint, Point endPoint):base (canvas, color, startPoint, endPoint)
         {
             typeName = "Line";
+            typeNameRu = "Линия";
         }
 
         public override void Draw(Canvas canvas)
@@ -31,7 +32,9 @@ namespace GraphicEditor
                 canvas.Children.Add(path);
             }
             catch
-            { }
+            {
+                MessageBox.Show("error with drawing");
+            }
         }
     }
 }

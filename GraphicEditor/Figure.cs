@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows;
 using System.Windows.Shapes;
 using System.Windows.Controls;
+using System.Reflection;
 
 namespace GraphicEditor
 {
@@ -18,6 +19,7 @@ namespace GraphicEditor
         protected Path path;
         protected Canvas canvas;
         public string typeName;
+        public string typeNameRu;
             
         public Figure(Canvas canvas, Color color, Point startPoint, Point endPoint)
         {
@@ -31,6 +33,17 @@ namespace GraphicEditor
         }
 
         public abstract void Draw(Canvas canvas);
+
+        public Button MakeButton(string lang)
+        {
+            Button button = new Button();
+            button.Name = "B" + typeName;
+            if (lang == "en")
+                button.Content = typeName;
+            if (lang == "ru")
+                button.Content = typeNameRu;
+            return button;
+        }
 
     }
 }

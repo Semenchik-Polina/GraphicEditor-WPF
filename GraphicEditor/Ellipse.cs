@@ -15,6 +15,7 @@ namespace GraphicEditor
         public Ellipse(Canvas canvas, Color color, Point startPoint, Point endPoint) : base(canvas, color, startPoint, endPoint)
         {
             typeName = "Ellipse";
+            typeNameRu = "Эллипс";
         }
 
         public override void Draw(Canvas canvas)
@@ -29,7 +30,9 @@ namespace GraphicEditor
                 canvas.Children.Add(path);
             }
             catch
-            {  }
+            {
+                MessageBox.Show("error with drawing");
+            }
         }
     }
 }
