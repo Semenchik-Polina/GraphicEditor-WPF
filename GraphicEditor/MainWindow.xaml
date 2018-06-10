@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GraphicEditor"
         mc:Ignorable="d"
-        Title="Almost Paint" Height="800" Width="1300" Loaded="Window_Loaded" MinHeight="550" MaxHeight="800">
+        Title="Almost Paint" Height="800" Width="1300" Loaded="Window_Loaded" MinHeight="550" MaxHeight="800" Closed="Window_Closed">
 
     <Grid >
          <Grid.ColumnDefinitions>
@@ -17,6 +17,7 @@
             <Button Name="BLoadFigures" Click="BLoadFigures_Click"></Button>
         </StackPanel>
         <StackPanel Grid.Column="0" VerticalAlignment="Bottom" Margin="0,0,0,0.4" Width="140">
+            <Button Name="BCreateFigure" Click="BCreateFigure_Click"></Button>
             <Button Name="BChange" Click="BChange_Click"></Button>
             <Button Name="BSave" Click="BSave_Click"></Button>
             <Button Name="BLoad" Click="BLoad_Click"></Button>
@@ -30,7 +31,7 @@
         <StackPanel Grid.Column="2" VerticalAlignment="Bottom"  Margin="0,0,0,0.4" Width="140">
             <Button Name="BSettings" Click="BSettings_Click" VerticalAlignment="Bottom">Settings</Button>
         </StackPanel>
-        <Canvas Grid.Column="1" Background="Transparent" x:Name="CanvasMain" ClipToBounds="True" MouseDown="CanvasMain_MouseDown" MouseUp="CanvasMain_MouseUp"/>
+        <Canvas Grid.Column="1" Background="Transparent" x:Name="CanvasMain" ClipToBounds="True" MouseDown="CanvasMain_MouseDown" MouseUp="CanvasMain_MouseUp" MouseEnter="CanvasMain_MouseEnter" MouseLeave="CanvasMain_MouseLeave"/>
 
     </Grid>
 </Window>

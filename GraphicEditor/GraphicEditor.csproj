@@ -60,12 +60,16 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Circle.cs" />
+    <Compile Include="CompositeFigure.cs" />
     <Compile Include="Ellipse.cs" />
     <Compile Include="Rectangle.cs" />
     <Compile Include="Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
     <Compile Include="Square.cs" />
+    <Compile Include="WCreateFigure.xaml.cs">
+      <DependentUpon>WCreateFigure.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -81,6 +85,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Settings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WCreateFigure.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

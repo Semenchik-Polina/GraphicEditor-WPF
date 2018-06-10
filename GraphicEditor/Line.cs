@@ -19,7 +19,7 @@ namespace GraphicEditor
             typeNameRu = "Линия";
         }
 
-        public override void Draw(Canvas canvas)
+        public override void Draw()
         {
             LineGeometry lineGeometry = new LineGeometry();
             lineGeometry.StartPoint = startPoint;
@@ -27,14 +27,6 @@ namespace GraphicEditor
             lineGeometry.EndPoint = endPoint;
 
             path.Data = lineGeometry;
-            try
-            {
-                canvas.Children.Add(path);
-            }
-            catch
-            {
-                MessageBox.Show("error with drawing");
-            }
         }
     }
 }

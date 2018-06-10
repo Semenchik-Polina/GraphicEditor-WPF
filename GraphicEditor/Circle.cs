@@ -18,22 +18,13 @@ namespace GraphicEditor
             typeNameRu = "Круг";
         }
 
-        public override void Draw(Canvas canvas)
+        public override void Draw()
         {
             size = new Size(Height, Height);
             Rect rect = new Rect(startPoint, size);
             EllipseGeometry ellipseGeometry = new EllipseGeometry(rect);
             
             path.Data = ellipseGeometry;
-            try
-            {
-                canvas.Children.Add(path);
-                canvas.InvalidateVisual();
-            }
-            catch
-            {
-                MessageBox.Show("error with drawing");
-            }
         }
     }
 }

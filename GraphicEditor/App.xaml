@@ -25,5 +25,18 @@
             <Setter Property="FontSize" Value="15"/>
             <Setter Property="Margin" Value="5" />
         </Style>
+        <Style TargetType="Label">
+            <Setter Property="Width" Value="120" />
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Margin" Value="3" />
+            <Setter Property="FontWeight"  Value="Medium"/>
+         </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Width" Value="200" />
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Margin" Value="5" />
+        </Style>
     </Application.Resources>
 </Application>

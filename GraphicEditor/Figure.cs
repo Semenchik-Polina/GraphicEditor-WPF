@@ -31,7 +31,8 @@ namespace GraphicEditor
                     return typeNameRu;
             }
         }
-       */     
+       */
+
         public Figure(Canvas canvas, Color color, Point startPoint, Point endPoint)
         {
             path = new Path();
@@ -43,7 +44,7 @@ namespace GraphicEditor
             this.canvas = canvas;
         }
 
-        public abstract void Draw(Canvas canvas);
+        public abstract void Draw();
 
         public Button MakeButton(string lang)
         {
@@ -54,6 +55,19 @@ namespace GraphicEditor
             if (lang == "ru")
                 button.Content = typeNameRu;
             return button;
+        }
+
+        public void ToCanvas()
+        {
+            try
+            {
+                canvas.Children.Add(path);
+                canvas.InvalidateVisual();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
     }

@@ -34,21 +34,13 @@ namespace GraphicEditor
             }
         }
 
-        public override void Draw(Canvas canvas)
+        public override void Draw()
         {
             size = new Size(Height, Height);
             RectangleGeometry rectangleGeometry = new RectangleGeometry();
             rectangleGeometry.Rect = new Rect(startPoint,size);
 
             path.Data = rectangleGeometry;
-            try
-            {
-                canvas.Children.Add(path);
-            }
-            catch
-            {
-                MessageBox.Show("error with drawing");
-            }
         }
     }
 }

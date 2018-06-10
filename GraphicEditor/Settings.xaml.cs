@@ -23,7 +23,6 @@ namespace GraphicEditor
     /// </summary>
     public partial class Settings : Window
     {
-    //    string sAttr;
         private string themeColor;
         private XmlDocument xd;
         private string language;
@@ -39,11 +38,15 @@ namespace GraphicEditor
             {
                 xd.Load(configPass);
                 XmlNode node = xd.SelectSingleNode("//setting[@name = 'Theme']");
-                if (node != null)
+                if (node != null && mainWindow.themes.ContainsKey(node.InnerText))
                     themeColor = node.InnerText;
+                else
+                    themeColor = "gray";
                 node = xd.SelectSingleNode("//setting[@name = 'Language']");
-                if (node != null)
+                if (node != null && (node.InnerText == "ru" ^ node.InnerText == "en"))
                     language = node.InnerText;
+                else
+                    language = "en";
             }
             catch (Exception ex)
             {
@@ -75,14 +78,24 @@ namespace GraphicEditor
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            XmlNode node = xd.SelectSingleNode("//setting[@name = 'Theme']");
-            if (node != null)
-                node.InnerText = themeColor;
-            node = xd.SelectSingleNode("//setting[@name = 'Language']");
-            if (node != null)
-                node.InnerText = language;
-            xd.Save(configPass);
-            this.Close();
+            try
+            {
+                XmlNode node = xd.SelectSingleNode("//setting[@name = 'Theme']");
+                if (node != null)
+                    node.InnerText = themeColor;
+                node = xd.SelectSingleNode("//setting[@name = 'Language']");
+                if (node != null)
+                    node.InnerText = language;
+                xd.Save(configPass);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                this.Close();
+            } 
         }
 
         private void RBEnLang_Click(object sender, RoutedEventArgs e)

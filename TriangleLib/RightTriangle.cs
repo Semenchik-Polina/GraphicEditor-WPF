@@ -19,7 +19,7 @@ namespace TriangleLib
             typeNameRu = "Прямоугольный треугольник";
         }
 
-        public override void Draw(Canvas canvas)
+        public override void Draw()
         {
             PathFigure pf = new PathFigure();
             pf.StartPoint = startPoint;
@@ -30,14 +30,6 @@ namespace TriangleLib
             PathGeometry pg = new PathGeometry();
             pg.Figures.Add(pf);
             path.Data = pg;
-            try
-            {
-                canvas.Children.Add(path);
-            }
-            catch
-            {
-                MessageBox.Show("error with drawing");
-            }
         }
     }
 }

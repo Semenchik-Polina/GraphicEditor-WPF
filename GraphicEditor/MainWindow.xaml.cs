@@ -27,7 +27,7 @@ namespace GraphicEditor
     {
         protected List<Figure> listOfFigures = new List<Figure>();
         public List<Visual> hitList;
-        private List<Figure> additionalFigList, basicFigures;
+        private List<Figure> additionalFigList, basicFigures, compositeFigList;
         public Figure curFigure;
         public Color color = Color.FromRgb(0,0,0);
         protected Point startPoint, endPoint;
@@ -35,10 +35,12 @@ namespace GraphicEditor
         private string themeColor, lang;
         private const string configPass = "C:\\all you need is\\to study\\ООП\\wpf\\GraphicEditor-WPF\\GraphicEditor\\App.config";
         public Dictionary<string, Color> themes = new Dictionary<string, Color>();
+        public string compFigNameEn, compFigNameRu;
 
         public MainWindow()
         {
             InitializeComponent();
+            ListBoxOfFigures.SelectionMode = SelectionMode.Multiple;
             themes.Add("gray", Color.FromRgb(200, 200, 200));
             themes.Add("blue", Color.FromRgb(202, 225, 250));
             themes.Add("pink", Color.FromRgb(243, 225, 250));
@@ -54,24 +56,26 @@ namespace GraphicEditor
 
             ReadConfig();
             DrawBasicButtons();
-
-            Background = new SolidColorBrush(themes[themeColor]);        
+            ChangeTheme();
         }
 
         private void DrawBasicButtons ()
         {
             string nspace = "GraphicEditor";
-            IEnumerable<Type> Types = from t in Assembly.GetExecutingAssembly().GetTypes()
+            IEnumerable<Type> types = from t in Assembly.GetExecutingAssembly().GetTypes()
                                       where t.IsClass && t.Namespace == nspace && t.IsSubclassOf(typeof(Figure))
                                       select t;
-            foreach (Type t in Types)
+            foreach (Type t in types)
             {
-                Figure figureType = (Figure)Activator.CreateInstance(t, canvas, color, startPoint, endPoint);
-                basicFigures.Add((Figure)figureType);
-                Button figureButton = new Button();
-                figureButton = figureType.MakeButton(lang);
-                figureButton.Click += FigureButton_Click;
-                ShapesPanel.Children.Add(figureButton);
+                if (t.Name != "CompositeFigure")
+                { 
+                    Figure figureType = (Figure)Activator.CreateInstance(t, canvas, color, startPoint, endPoint);
+                    basicFigures.Add((Figure)figureType);
+                    Button figureButton = new Button();
+                    figureButton = figureType.MakeButton(lang);
+                    figureButton.Click += FigureButton_Click;
+                    ShapesPanel.Children.Add(figureButton);
+                }                
             }
         }
 
@@ -82,11 +86,15 @@ namespace GraphicEditor
             {
                 xd.Load(configPass);
                 XmlNode node = xd.SelectSingleNode("//setting[@name = 'Theme']");
-                if (node != null)
+                if (node != null && themes.ContainsKey(node.InnerText))
                     themeColor = node.InnerText;
+                else
+                    themeColor = "gray";
                 node = xd.SelectSingleNode("//setting[@name = 'Language']");
-                if (node != null)
+                if (node != null && (node.InnerText == "ru" ^ node.InnerText == "en"))
                     lang = node.InnerText;
+                else
+                    lang = "en";
             }
             catch (Exception ex)
             {
@@ -103,7 +111,7 @@ namespace GraphicEditor
             Background = new SolidColorBrush(themes[themeColor]);
         }
 
-            public void ChangeLanguage()
+        public void ChangeLanguage()
         {
             switch (lang)
             {
@@ -114,6 +122,8 @@ namespace GraphicEditor
                     BLoad.Content = "Load";
                     BRemove.Content = "Remove";
                     BLoadFigures.Content = "Load figures";
+                    BSettings.Content = "Settings";
+                    BCreateFigure.Content = "Сreate figure";
                     break;
                 case "ru":
                     BClear.Content = "Очистить";
@@ -122,6 +132,8 @@ namespace GraphicEditor
                     BLoad.Content = "Загрузить";
                     BRemove.Content = "Удалить";
                     BLoadFigures.Content = "Загрузить фигуры";
+                    BSettings.Content = "Настройки";
+                    BCreateFigure.Content = "Создать фигуру";
                     break;
             }
         }
@@ -148,8 +160,7 @@ namespace GraphicEditor
             if (openFileDialog.ShowDialog() == true)
             {
                 Assembly libAssembly = Assembly.LoadFrom(openFileDialog.FileName);
-                //BTriangle.IsEnabled = false;
-                //BTriangle.Content = "UnLoad triangles";
+                BLoadFigures.IsEnabled = false;
                 foreach (Type t in libAssembly.GetExportedTypes())
                 {
                     if (t.IsClass && typeof(ITriangle).IsAssignableFrom(t))
@@ -194,10 +205,11 @@ namespace GraphicEditor
             return HitTestResultBehavior.Stop;
         }
 
-        private void DrawAnyFigure(Figure curFigure, Color color, Point startPoint, Point endPoint)
+        private void DrawBasicFigure(Figure curFigure, Color color, Point startPoint, Point endPoint)
         {
             curFigure = (Figure)Activator.CreateInstance(curFigure.GetType(), canvas, color, startPoint, endPoint);
-            curFigure.Draw(canvas);
+            curFigure.Draw();
+            curFigure.ToCanvas();
             listOfFigures.Add(curFigure);
             ListBoxItem item = new ListBoxItem();
             if (lang == "ru")
@@ -212,7 +224,7 @@ namespace GraphicEditor
             endPoint = e.GetPosition(CanvasMain);
             if (curFigure != null)
             {
-                DrawAnyFigure(curFigure, color, startPoint, endPoint);
+                DrawBasicFigure(curFigure, color, startPoint, endPoint);
             }
             else
             {
@@ -234,7 +246,7 @@ namespace GraphicEditor
             figure.startPoint.Y += endPoint.Y - startPoint.Y;
             figure.endPoint.X += endPoint.X - startPoint.X;
             figure.endPoint.Y += endPoint.Y - startPoint.Y;
-            figure.Draw(canvas);
+            figure.Draw();
         }
     
         private void CanvasMain_MouseDown(object sender, MouseButtonEventArgs e)
@@ -293,12 +305,62 @@ namespace GraphicEditor
                 using (var fStream = File.OpenRead(openFileDialog.FileName))
                 {
                     var json = new StreamReader(fStream).ReadToEnd();
-                    var figures = JsonConvert.DeserializeObject<List<Figure>>(json, settings);
-                    foreach (Figure figure in figures)
+                    try
                     {
-                        DrawAnyFigure(figure, figure.color, figure.startPoint, figure.endPoint);
+                        var figures = JsonConvert.DeserializeObject<List<Figure>>(json, settings);
+                        foreach (Figure figure in figures)
+                        {
+                            curFigure = (Figure)Activator.CreateInstance(curFigure.GetType(), canvas, color, startPoint, endPoint);
+                            curFigure.Draw();
+                            curFigure.ToCanvas();
+                            listOfFigures.Add(curFigure);
+                            ListBoxItem item = new ListBoxItem();
+                            if (lang == "ru")
+                                item.Content = curFigure.typeNameRu;
+                            else
+                                item.Content = curFigure.typeName;
+                            ListBoxOfFigures.Items.Add(item);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
                     }
                 }
+            }
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+
+        private void CanvasMain_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if (curFigure != null)
+                this.Cursor = Cursors.Pen;
+            else
+                this.Cursor = Cursors.Hand;
+        }
+
+        private void CanvasMain_MouseLeave(object sender, MouseEventArgs e)
+        {
+            this.Cursor = Cursors.Arrow;
+        }
+
+        /// <summary>
+        /// /////////////////////////////////
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BCreateFigure_Click(object sender, RoutedEventArgs e)
+        {
+            if (ListBoxOfFigures.SelectedItems.Count > 1)
+            {
+                compFigNameEn = "";
+                compFigNameRu = "";
+                WCreateFigure wCreate = new WCreateFigure();
+                wCreate.ShowDialog();
             }
         }
 
@@ -316,7 +378,6 @@ namespace GraphicEditor
         private void BSettings_Click(object sender, RoutedEventArgs e)
         {
             GraphicEditor.Settings settings = new GraphicEditor.Settings();
-            settings.Owner = this;
             settings.ShowDialog();
             ReadConfig();
             for (int i = basicFigures.Count + additionalFigList.Count; i > 0; i--)
@@ -337,11 +398,6 @@ namespace GraphicEditor
                 figureButton.Click += FigureButton_Click;
                 ShapesPanel.Children.Add(figureButton);
             }
-      /*      for (int i = 0; i < ListBoxOfFigures.Items.Count; i++)
-            {
-                if (lang == "en")
-                    ListBoxOfFigures.Items[i] = 
-            }*/
         }
 
         private void BChange_Click(object sender, RoutedEventArgs e)
