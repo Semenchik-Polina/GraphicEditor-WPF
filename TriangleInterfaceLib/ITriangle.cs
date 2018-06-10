@@ -9,6 +9,6 @@ namespace TriangleInterfaceLib
 {
     public interface ITriangle
     {
-        void Draw(Canvas canvas);
+        void Draw();
     }
 }

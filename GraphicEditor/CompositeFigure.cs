@@ -9,9 +9,12 @@ using System.Windows.Media;
 
 namespace GraphicEditor
 {
-    public class CompositeFigure: Figure
+    public abstract class CompositeFigure: Figure
     {
-        public Geometry[] partFigures;
+        public abstract Geometry[] PartFigures
+        {
+            get; set;
+        }
 
         public CompositeFigure(Canvas canvas, Color color, Point startPoint, Point endPoint) : base(canvas, color, startPoint, endPoint)
         { }
@@ -19,23 +22,32 @@ namespace GraphicEditor
         public CompositeFigure(Canvas canvas, Color color, Point startPoint, Point endPoint, Geometry[] partFigures, 
                                 string typeName, string typeNameRu) : this(canvas, color, startPoint, endPoint)
         {
-            this.partFigures = partFigures;
+            this.PartFigures = partFigures;
             this.typeName = typeName;
             this.typeNameRu = typeNameRu;
         }
 
         public override void Draw()
         {
-   /*         Point startPoint = partFigures[0].Bounds.TopLeft;
-            Geometry mainFigure = partFigures[0];
-            for (int i=1; i< partFigures.Count(); i++)
+            /*       Point startPoint = partFigures[0].Bounds.TopLeft;
+                  int indexMain = 0;
+                  for (int i=1; i< partFigures.Count(); i++)
+                  {
+
+                     if (startPoint.X > partFigures[i].Bounds.TopLeft.X || startPoint.Y > partFigures[i].Bounds.TopLeft.Y)
+                      {
+                          startPoint = partFigures[i].Bounds.TopLeft;
+                          indexMain = i;
+                      }
+                  }
+                  Geometry mainFigure = partFigures[indexMain];*/
+
+            GeometryGroup geometryGroup = new GeometryGroup();
+            for (int i = 1; i < PartFigures.Count(); i++)
             {
-                if (startPoint.X > partFigures[i].Bounds.TopLeft.X || startPoint.Y > partFigures[i].Bounds.TopLeft.Y)
-                {
-                    startPoint = partFigures[i].Bounds.TopLeft;
-                    mainFigure = partFigures[i];
-                }
+                geometryGroup.Children.Add(PartFigures[i]);
             }
-     */   }
+            path.Data = geometryGroup;      
+        }
     }
 }
