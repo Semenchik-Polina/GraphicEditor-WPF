@@ -10,8 +10,12 @@ using System.Windows.Media;
 
 namespace GraphicEditor
 {
+    [Serializable]
     public class Circle: Square
     {
+        public Circle()
+        { }
+
         public Circle(Canvas canvas, Color color, Point startPoint, Point endPoint) : base(canvas, color, startPoint, endPoint)
         {
             typeName = "Circle";

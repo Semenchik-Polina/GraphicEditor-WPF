@@ -10,8 +10,12 @@ using System.Windows.Media;
 
 namespace GraphicEditor
 {
+    [Serializable]
     public class Ellipse: Rectangle
     {
+        public Ellipse() : base()
+        { }
+
         public Ellipse(Canvas canvas, Color color, Point startPoint, Point endPoint) : base(canvas, color, startPoint, endPoint)
         {
             typeName = "Ellipse";

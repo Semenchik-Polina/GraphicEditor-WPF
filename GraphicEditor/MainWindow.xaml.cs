@@ -20,6 +20,8 @@ using System.Reflection;
 using TriangleInterfaceLib;
 using System.Xml.Linq;
 using System.Xml;
+using System.Reflection.Emit;
+using System.Xml.Serialization;
 
 namespace GraphicEditor
 {
@@ -37,9 +39,21 @@ namespace GraphicEditor
         public Dictionary<string, Color> themes = new Dictionary<string, Color>();
         public string compFigNameEn, compFigNameRu;
 
+        private AssemblyName an = new AssemblyName("MyAssembly");
+        private AssemblyBuilder ab;
+        private ModuleBuilder mb;
+
         public MainWindow()
         {
             InitializeComponent();
+
+            an.Version = new Version("1.0.0.0");
+                // Создание сборки.            
+            ab = AppDomain.CurrentDomain.DefineDynamicAssembly(an, AssemblyBuilderAccess.Save);
+                // Создание модуля в сборке.
+            mb = ab.DefineDynamicModule("MyModule", "My.dll");
+
+
             ListBoxOfFigures.SelectionMode = SelectionMode.Multiple;
             themes.Add("gray", Color.FromRgb(200, 200, 200));
             themes.Add("blue", Color.FromRgb(202, 225, 250));
@@ -271,24 +285,39 @@ namespace GraphicEditor
             }
         }
 
-        readonly JsonSerializerSettings settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All };
+      //  readonly JsonSerializerSettings settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All };
 
         private void BSave_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog()
             {
-                Filter = "JSON Files (*.json)|*.json|All files (*.*)|*.*",
+                Filter = "XML Files (*.xml)|*.xml|All files (*.*)|*.*",
                 FilterIndex = 0
             };
             if (saveFileDialog.ShowDialog() == true)
             {
-                using (FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.OpenOrCreate))
+                XmlSerializer formatter = new XmlSerializer(typeof(List<Figure>));
+                try
                 {
-                    var json = JsonConvert.SerializeObject(listOfFigures, Newtonsoft.Json.Formatting.None, settings);
-                    var writeStream = new StreamWriter(fs);
-                    writeStream.Write(json);
-                    writeStream.Flush();
+                    using (FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.OpenOrCreate))
+                    {
+                        formatter.Serialize(fs, listOfFigures);
+                    }
                 }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+                
+                /*    using (FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.OpenOrCreate))
+                    {
+                        var json = JsonConvert.SerializeObject(listOfFigures, Newtonsoft.Json.Formatting.None, settings);
+                        var writeStream = new StreamWriter(fs);
+                        writeStream.Write(json);
+                        writeStream.Flush();
+                    }*/
+
+
             }
         }
 
@@ -297,34 +326,53 @@ namespace GraphicEditor
             OpenFileDialog openFileDialog = new OpenFileDialog()
             {
                 InitialDirectory = "C:\\Projects\\ООП\\CoolPaint",
-                Filter = "JSON Files (*.json)|*.json|All files (*.*)|*.*",
+                Filter = "XML Files (*.xml)|*.xml|All files (*.*)|*.*",
                 FilterIndex = 0
             };
             if (openFileDialog.ShowDialog() == true)
             {
-                using (var fStream = File.OpenRead(openFileDialog.FileName))
+                /*         using (var fStream = File.OpenRead(openFileDialog.FileName))
+                         {
+                             var json = new StreamReader(fStream).ReadToEnd();
+                             try
+                             {
+                                 var figures = JsonConvert.DeserializeObject<List<Figure>>(json, settings);
+                                 foreach (Figure figure in figures)
+                                 {
+                                     curFigure = (Figure)Activator.CreateInstance(curFigure.GetType(), canvas, color, startPoint, endPoint);
+                                     curFigure.Draw();
+                                     curFigure.ToCanvas();
+                                     listOfFigures.Add(curFigure);
+                                     ListBoxItem item = new ListBoxItem();
+                                     if (lang == "ru")
+                                         item.Content = curFigure.typeNameRu;
+                                     else
+                                         item.Content = curFigure.typeName;
+                                     ListBoxOfFigures.Items.Add(item);
+                                 }
+                             }
+                             catch (Exception ex)
+                             {
+                                 MessageBox.Show(ex.Message);
+                             }
+                         }*/
+                XmlSerializer formatter = new XmlSerializer(typeof(Figure[]));
+                using (FileStream fs = new FileStream(openFileDialog.FileName, FileMode.OpenOrCreate))
                 {
-                    var json = new StreamReader(fStream).ReadToEnd();
-                    try
+                    Figure[] figures = (Figure[])formatter.Deserialize(fs);
+
+                    foreach (Figure figure in figures)
                     {
-                        var figures = JsonConvert.DeserializeObject<List<Figure>>(json, settings);
-                        foreach (Figure figure in figures)
-                        {
-                            curFigure = (Figure)Activator.CreateInstance(curFigure.GetType(), canvas, color, startPoint, endPoint);
-                            curFigure.Draw();
-                            curFigure.ToCanvas();
-                            listOfFigures.Add(curFigure);
-                            ListBoxItem item = new ListBoxItem();
-                            if (lang == "ru")
-                                item.Content = curFigure.typeNameRu;
-                            else
-                                item.Content = curFigure.typeName;
-                            ListBoxOfFigures.Items.Add(item);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message);
+                        curFigure = (Figure)Activator.CreateInstance(curFigure.GetType(), canvas, color, startPoint, endPoint);
+                        curFigure.Draw();
+                        curFigure.ToCanvas();
+                        listOfFigures.Add(curFigure);
+                        ListBoxItem item = new ListBoxItem();
+                        if (lang == "ru")
+                            item.Content = curFigure.typeNameRu;
+                        else
+                            item.Content = curFigure.typeName;
+                        ListBoxOfFigures.Items.Add(item);
                     }
                 }
             }
@@ -359,6 +407,9 @@ namespace GraphicEditor
             {
                 compFigNameEn = "";
                 compFigNameRu = "";
+                Geometry[] partFigures = new Geometry[ListBoxOfFigures.SelectedItems.Count];
+                for (int i = 0; i < ListBoxOfFigures.SelectedItems.Count; i++)
+                    partFigures[i] = canvas.Children[i].Clip;
                 WCreateFigure wCreate = new WCreateFigure();
                 wCreate.ShowDialog();
             }

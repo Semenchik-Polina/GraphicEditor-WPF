@@ -9,6 +9,7 @@ using System.Windows.Media;
 
 namespace GraphicEditor
 {
+    [Serializable]
     public abstract class CompositeFigure: Figure
     {
         public abstract Geometry[] PartFigures

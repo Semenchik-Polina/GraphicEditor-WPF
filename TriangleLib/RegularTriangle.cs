@@ -6,12 +6,18 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using GraphicEditor;
+using System.Xml.Serialization;
 
 namespace TriangleLib
 {
+    [XmlInclude(typeof(RegularTriangle))]
+    [Serializable]
     public class RegularTriangle : Figure, ITriangle
     {
         public Figure curFigure;
+
+        public RegularTriangle()
+        { }
      
         public RegularTriangle(Canvas canvas, Color color, Point startPoint, Point endPoint) : base(canvas, color, startPoint, endPoint)
         {

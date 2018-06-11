@@ -12,6 +12,9 @@ namespace GraphicEditor
 {
     public class Rectangle : Square
     {
+        public Rectangle(): base()
+        { }
+
         public Rectangle(Canvas canvas, Color color, Point startPoint, Point endPoint):base (canvas, color, startPoint, endPoint)
         {
             typeName = "Rectangle";

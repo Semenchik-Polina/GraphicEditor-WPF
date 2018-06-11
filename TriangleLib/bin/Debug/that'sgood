@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<ArrayOfFigure xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Figure xsi:type="Circle">
+    <color>
+      <A>0</A>
+      <R>0</R>
+      <G>0</G>
+      <B>0</B>
+      <ScA>0</ScA>
+      <ScR>0</ScR>
+      <ScG>0</ScG>
+      <ScB>0</ScB>
+    </color>
+    <startPoint>
+      <X>104</X>
+      <Y>67.2</Y>
+    </startPoint>
+    <endPoint>
+      <X>367.20000000000005</X>
+      <Y>262.40000000000003</Y>
+    </endPoint>
+    <typeName>Circle</typeName>
+    <typeNameRu>Круг</typeNameRu>
+  </Figure>
+</ArrayOfFigure>

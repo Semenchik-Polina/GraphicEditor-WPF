@@ -8,9 +8,16 @@ using System.Windows;
 using System.Windows.Shapes;
 using System.Windows.Controls;
 using System.Reflection;
+using System.Xml.Serialization;
 
 namespace GraphicEditor
 {
+    [XmlInclude(typeof(Ellipse))]
+    [XmlInclude(typeof(Circle))]
+    [XmlInclude(typeof(Line))]
+    [XmlInclude(typeof(Square))]
+    [XmlInclude(typeof(Rectangle))]
+    [Serializable]
     public abstract class Figure
     {
         public Color color;
@@ -20,19 +27,19 @@ namespace GraphicEditor
         protected Canvas canvas;
         public string typeName;
         public string typeNameRu;
-    //    public string lang;
+        //    public string lang;
 
-     /*   public string TypeName
-        { get
-            {
-                if (this.lang == "en")
-                    return typeName;
-                else
-                    return typeNameRu;
-            }
-        }
-       */
-
+        /*   public string TypeName
+           { get
+               {
+                   if (this.lang == "en")
+                       return typeName;
+                   else
+                       return typeNameRu;
+               }
+           }
+          */
+        
         public Figure(Canvas canvas, Color color, Point startPoint, Point endPoint)
         {
             path = new Path();
@@ -43,6 +50,10 @@ namespace GraphicEditor
             this.endPoint = endPoint;
             this.canvas = canvas;
         }
+
+        public Figure() 
+        {  }
+
 
         public abstract void Draw();
 
@@ -62,6 +73,7 @@ namespace GraphicEditor
             try
             {
                 canvas.Children.Add(path);
+         //       canvas.Children[canvas.Children.Count - 1].Clip = path.Data;
                 canvas.InvalidateVisual();
             }
             catch (Exception ex)

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<ArrayOfFigure xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Figure xsi:type="Ellipse">
+    <color>
+      <A>0</A>
+      <R>0</R>
+      <G>0</G>
+      <B>0</B>
+      <ScA>0</ScA>
+      <ScR>0</ScR>
+      <ScG>0</ScG>
+      <ScB>0</ScB>
+    </color>
+    <startPoint>
+      <X>138.40000000000003</X>
+      <Y>110.4</Y>
+    </startPoint>
+    <endPoint>
+      <X>409.6</X>
+      <Y>259.2</Y>
+    </endPoint>
+    <typeName>Ellipse</typeName>
+    <typeNameRu>Эллипс</typeNameRu>
+  </Figure>
+</ArrayOfFigure>

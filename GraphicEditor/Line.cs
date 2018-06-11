@@ -11,8 +11,12 @@ using System.Windows.Shapes;
 
 namespace GraphicEditor
 {
+    [Serializable]
     public class Line: Figure
     {
+        public Line()
+        { }
+
         public Line(Canvas canvas, Color color, Point startPoint, Point endPoint):base (canvas, color, startPoint, endPoint)
         {
             typeName = "Line";

@@ -12,6 +12,9 @@ namespace GraphicEditor
 {
     public class Square:Figure
     {
+        public Square():base()
+        { }
+
         public Square(Canvas canvas, Color color, Point startPoint, Point endPoint) : base(canvas, color, startPoint, endPoint)
         {
             typeName = "Square";

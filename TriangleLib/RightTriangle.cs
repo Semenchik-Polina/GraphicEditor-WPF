@@ -6,13 +6,19 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using GraphicEditor;
+using System.Xml.Serialization;
 
 namespace TriangleLib
 {
+    [XmlInclude(typeof(RightTriangle))]
+    [Serializable]
     public class RightTriangle : Figure, ITriangle
     {
         public Figure curFigure;
      
+        public RightTriangle()
+        { }
+
         public RightTriangle(Canvas canvas, Color color, Point startPoint, Point endPoint) : base(canvas, color, startPoint, endPoint)
         {
             typeName = "RightTriangle";
