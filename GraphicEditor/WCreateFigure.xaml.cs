@@ -24,35 +24,11 @@ namespace GraphicEditor
         private XmlDocument xd;
         private string language;
         private const string configPass = "C:\\all you need is\\to study\\ООП\\wpf\\GraphicEditor-WPF\\GraphicEditor\\App.config";
-        MainWindow mainWindow;
+        private MainWindow mainWindow;
 
         public WCreateFigure()
         {
             InitializeComponent();
-            mainWindow = new MainWindow();
-            xd = new XmlDocument();
-            try
-            {
-                xd.Load(configPass);
-                XmlNode node = xd.SelectSingleNode("//setting[@name = 'Theme']");
-                if (node != null && mainWindow.themes.ContainsKey(node.InnerText))
-                    themeColor = node.InnerText;
-                else
-                    themeColor = "gray";
-                node = xd.SelectSingleNode("//setting[@name = 'Language']");
-                if (node != null && (node.InnerText == "ru" ^ node.InnerText == "en"))
-                    language = node.InnerText;
-                else
-                    language = "en";
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                language = "en";
-                themeColor = "gray";
-            }
-            ChangeLanguage();
-            Background = new SolidColorBrush(mainWindow.themes[themeColor]);
         }
 
         private void ChangeLanguage()
@@ -85,6 +61,34 @@ namespace GraphicEditor
             mainWindow.compFigNameEn = TBNameEn.Text;
             mainWindow.compFigNameRu = TBNameRu.Text;
             this.Close();
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            mainWindow = (MainWindow)this.Owner;
+            xd = new XmlDocument();
+            try
+            {
+                xd.Load(configPass);
+                XmlNode node = xd.SelectSingleNode("//setting[@name = 'Theme']");
+                if (node != null && mainWindow.themes.ContainsKey(node.InnerText))
+                    themeColor = node.InnerText;
+                else
+                    themeColor = "gray";
+                node = xd.SelectSingleNode("//setting[@name = 'Language']");
+                if (node != null && (node.InnerText == "ru" ^ node.InnerText == "en"))
+                    language = node.InnerText;
+                else
+                    language = "en";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                language = "en";
+                themeColor = "gray";
+            }
+            ChangeLanguage();
+            Background = new SolidColorBrush(mainWindow.themes[themeColor]);
         }
     }
 }

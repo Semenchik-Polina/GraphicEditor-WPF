@@ -10,45 +10,41 @@ using System.Windows.Media;
 namespace GraphicEditor
 {
     [Serializable]
-    public abstract class CompositeFigure: Figure
+    public class CompositeFigure: Figure
     {
-        public abstract Geometry[] PartFigures
-        {
-            get; set;
-        }
+        public List<CompositeFigure> compositeFigList = new List<CompositeFigure>();
+        public System.Windows.Shapes.Path[] partFigures;
+       
+        public CompositeFigure() { }
 
         public CompositeFigure(Canvas canvas, Color color, Point startPoint, Point endPoint) : base(canvas, color, startPoint, endPoint)
-        { }
+        {
+            MainWindow mainWindow = new MainWindow();
+            this.typeName = mainWindow.compFigNameEn;
+            this.typeNameRu = mainWindow.compFigNameRu;
+        }
 
-        public CompositeFigure(Canvas canvas, Color color, Point startPoint, Point endPoint, Geometry[] partFigures, 
+        public CompositeFigure(Canvas canvas, Color color, Point startPoint, Point endPoint, System.Windows.Shapes.Path[] partFigures, 
                                 string typeName, string typeNameRu) : this(canvas, color, startPoint, endPoint)
         {
-            this.PartFigures = partFigures;
+            this.partFigures = partFigures;
             this.typeName = typeName;
             this.typeNameRu = typeNameRu;
         }
 
         public override void Draw()
         {
-            /*       Point startPoint = partFigures[0].Bounds.TopLeft;
-                  int indexMain = 0;
-                  for (int i=1; i< partFigures.Count(); i++)
-                  {
-
-                     if (startPoint.X > partFigures[i].Bounds.TopLeft.X || startPoint.Y > partFigures[i].Bounds.TopLeft.Y)
-                      {
-                          startPoint = partFigures[i].Bounds.TopLeft;
-                          indexMain = i;
-                      }
-                  }
-                  Geometry mainFigure = partFigures[indexMain];*/
-
             GeometryGroup geometryGroup = new GeometryGroup();
-            for (int i = 1; i < PartFigures.Count(); i++)
+            for (int i = 0; i < partFigures.Count(); i++)
             {
-                geometryGroup.Children.Add(PartFigures[i]);
+                geometryGroup.Children.Add(partFigures[i].Data);
             }
             path.Data = geometryGroup;      
+        }
+
+        public void Save()
+        {
+
         }
     }
 }

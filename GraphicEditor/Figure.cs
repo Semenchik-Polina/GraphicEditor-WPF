@@ -12,18 +12,13 @@ using System.Xml.Serialization;
 
 namespace GraphicEditor
 {
-    [XmlInclude(typeof(Ellipse))]
-    [XmlInclude(typeof(Circle))]
-    [XmlInclude(typeof(Line))]
-    [XmlInclude(typeof(Square))]
-    [XmlInclude(typeof(Rectangle))]
     [Serializable]
     public abstract class Figure
     {
         public Color color;
         public Point startPoint;
         public Point endPoint;
-        protected Path path;
+        public Path path;
         protected Canvas canvas;
         public string typeName;
         public string typeNameRu;
@@ -73,7 +68,6 @@ namespace GraphicEditor
             try
             {
                 canvas.Children.Add(path);
-         //       canvas.Children[canvas.Children.Count - 1].Clip = path.Data;
                 canvas.InvalidateVisual();
             }
             catch (Exception ex)

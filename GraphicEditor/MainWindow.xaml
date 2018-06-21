@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GraphicEditor"
         mc:Ignorable="d"
-        Title="Almost Paint" Height="800" Width="1300" Loaded="Window_Loaded" MinHeight="550" MaxHeight="800" Closed="Window_Closed">
+        Title="Almost Paint" Height="800" Width="1300" Closing="Window_Closing" Loaded="Window_Loaded" MinHeight="550" MaxHeight="800" Closed="Window_Closed">
 
     <Grid >
          <Grid.ColumnDefinitions>

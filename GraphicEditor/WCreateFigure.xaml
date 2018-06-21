@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GraphicEditor"
         mc:Ignorable="d"
-        Title="Create Figure" Height="250" Width="300">
+        Title="Create Figure" Height="250" Width="300" Loaded="Window_Loaded">
     <Grid>
         <StackPanel>
             <Label Name="LNameEn"></Label>
