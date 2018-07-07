@@ -12,9 +12,8 @@ namespace GraphicEditor
     [Serializable]
     public class CompositeFigure: Figure
     {
-        public List<CompositeFigure> compositeFigList = new List<CompositeFigure>();
-        public System.Windows.Shapes.Path[] partFigures;
-       
+        public List<System.Windows.Shapes.Path> partFigures;
+    
         public CompositeFigure() { }
 
         public CompositeFigure(Canvas canvas, Color color, Point startPoint, Point endPoint) : base(canvas, color, startPoint, endPoint)
@@ -24,7 +23,7 @@ namespace GraphicEditor
             this.typeNameRu = mainWindow.compFigNameRu;
         }
 
-        public CompositeFigure(Canvas canvas, Color color, Point startPoint, Point endPoint, System.Windows.Shapes.Path[] partFigures, 
+        public CompositeFigure(Canvas canvas, Color color, Point startPoint, Point endPoint, List<System.Windows.Shapes.Path> partFigures, 
                                 string typeName, string typeNameRu) : this(canvas, color, startPoint, endPoint)
         {
             this.partFigures = partFigures;

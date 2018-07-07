@@ -27,35 +27,39 @@ namespace GraphicEditor
 {
     public partial class MainWindow : Window
     {
-        protected List<Figure> listOfFigures = new List<Figure>();
-        private List<CompositeFigure> compositeFigList = new List<CompositeFigure>();
-        public List<Visual> hitList;
-        private List<Figure> additionalFigList, basicFigures;
-        public Figure temp, curFigure;
-        public Color color = Color.FromRgb(0, 0, 0);
-        protected Point startPoint, endPoint;
-        public Canvas canvas;
-        private string themeColor, lang;
         private const string configPass = "C:\\all you need is\\to study\\ООП\\wpf\\GraphicEditor-WPF\\GraphicEditor\\App.config";
+        private const string compFile = "C:\\all you need is\\to study\\ООП\\wpf\\GraphicEditor-WPF\\GraphicEditor\\user shapees\\userShapes.xml";
+
         public Dictionary<string, Color> themes = new Dictionary<string, Color>();
         public string compFigNameEn, compFigNameRu;
-        private System.Windows.Shapes.Path[] partFigures;
+        public List<Visual> hitList;
+        public Figure temp, curFigure;
+        public Color color = Color.FromRgb(0, 0, 0);
+        public Canvas canvas;
+
+        protected List<Figure> listOfFigures = new List<Figure>();
+        protected Point startPoint, endPoint;
+
+        private string themeColor, lang;
+        private List<System.Windows.Shapes.Path> partFigures;
+        private List<CompositeFigure> compositeFigList = new List<CompositeFigure>();
+        private List<Figure> additionalFigList, basicFigures;
 
 
-        private AssemblyName an = new AssemblyName("MyAssembly");
-        private AssemblyBuilder ab;
-        private ModuleBuilder mb;
-
+        /*   private AssemblyName an = new AssemblyName("MyAssembly");
+           private AssemblyBuilder ab;
+           private ModuleBuilder mb;
+   */
         public MainWindow()
         {
             InitializeComponent();
 
-            an.Version = new Version("1.0.0.0");
-            // Создание сборки.            
-            ab = AppDomain.CurrentDomain.DefineDynamicAssembly(an, AssemblyBuilderAccess.Save);
-            // Создание модуля в сборке.
-            mb = ab.DefineDynamicModule("MyModule", "My.dll");
-
+            /*    an.Version = new Version("1.0.0.0");
+                // Создание сборки.            
+                ab = AppDomain.CurrentDomain.DefineDynamicAssembly(an, AssemblyBuilderAccess.Save);
+                // Создание модуля в сборке.
+                mb = ab.DefineDynamicModule("MyModule", "My.dll");
+                */
 
             ListBoxOfFigures.SelectionMode = SelectionMode.Multiple;
             themes.Add("gray", Color.FromRgb(200, 200, 200));
@@ -73,6 +77,7 @@ namespace GraphicEditor
 
             ReadConfig();
             DrawBasicButtons();
+
             ChangeTheme();
         }
 
@@ -93,6 +98,35 @@ namespace GraphicEditor
                     figureButton.Click += FigureButton_Click;
                     ShapesPanel.Children.Add(figureButton);
                 }
+            }
+        }
+
+        private void DrawCompButtons()
+        {
+            try
+            {
+                var allFigures = basicFigures.Concat(additionalFigList);
+                allFigures = allFigures.Concat(compositeFigList);
+                var a = allFigures.Select(x => x.GetType()).Distinct();
+                XmlSerializer formatter = new XmlSerializer(typeof(Figure[]), a.ToArray());
+                using (FileStream fs = new FileStream(compFile, FileMode.OpenOrCreate))
+                {
+                    Figure[] figures = (Figure[])formatter.Deserialize(fs);
+                    foreach (Figure figure in figures)
+                    {
+                        compositeFigList.Add((CompositeFigure)figure);
+                        CompositeFigure figureType = (CompositeFigure)Activator.CreateInstance(typeof(CompositeFigure), canvas, color, startPoint, endPoint, partFigures, compFigNameEn, compFigNameRu);
+                        compositeFigList.Add(figureType);
+                        Button figureButton = new Button();
+                        figureButton = figureType.MakeButton(lang);
+                        figureButton.Click += CompFigureButton_Click;
+                        ShapesPanel.Children.Add(figureButton);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -221,20 +255,9 @@ namespace GraphicEditor
             }
             return HitTestResultBehavior.Stop;
         }
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         private void DrawBasicFigure(Figure curFigure, Color color, Point startPoint, Point endPoint)
         {
-            /*    if (curFigure.GetType() == typeof(CompositeFigure))
-                {
-                    for (int i = 0; i < compositeFigList.Count; i++)
-                    {
-                        if (curFigure.typeName ==  compositeFigList[i].typeName)
-                        {
-                            partFigures =    
-                        }
-                    }
-                    curFigure = Activator.CreateInstance(curFigure.GetType(), canvas, color, startPoint, endPoint)
-                }*/
             if (curFigure.GetType() != typeof(CompositeFigure))
                 curFigure = (Figure)Activator.CreateInstance(curFigure.GetType(), canvas, color, startPoint, endPoint);
             curFigure.Draw();
@@ -300,8 +323,6 @@ namespace GraphicEditor
             }
         }
 
-        //  readonly JsonSerializerSettings settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All };
-
         private void BSave_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog()
@@ -311,7 +332,6 @@ namespace GraphicEditor
             };
             if (saveFileDialog.ShowDialog() == true)
             {
-                //Type[] typeArray = new Type[] { typeof(Circle), typeof(Line) };
                 var allFigures = basicFigures.Concat(additionalFigList);
                 allFigures = allFigures.Concat(compositeFigList);
                 var a = allFigures.Select(x => x.GetType()).Distinct();
@@ -327,15 +347,6 @@ namespace GraphicEditor
                 {
                     MessageBox.Show(ex.Message);
                 }
-
-                /*    using (FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.OpenOrCreate))
-                    {
-                        var json = JsonConvert.SerializeObject(listOfFigures, Newtonsoft.Json.Formatting.None, settings);
-                        var writeStream = new StreamWriter(fs);
-                        writeStream.Write(json);
-                        writeStream.Flush();
-                    }*/
-
 
             }
         }
@@ -380,7 +391,7 @@ namespace GraphicEditor
                     var allFigures = basicFigures.Concat(additionalFigList);
                     allFigures = allFigures.Concat(compositeFigList);
                     var a = allFigures.Select(x => x.GetType()).Distinct();
-                    XmlSerializer formatter = new XmlSerializer(typeof(Figure[]),a.ToArray());
+                    XmlSerializer formatter = new XmlSerializer(typeof(Figure[]), a.ToArray());
                     using (FileStream fs = new FileStream(openFileDialog.FileName, FileMode.OpenOrCreate))
                     {
                         Figure[] figures = (Figure[])formatter.Deserialize(fs);
@@ -398,21 +409,16 @@ namespace GraphicEditor
                                 item.Content = curFigure.typeName;
                             ListBoxOfFigures.Items.Add(item);
                         }
-                   }
+                    }
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
                 }
-                
+
             }
         }
-
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            Application.Current.Shutdown();
-        }
-
+        
         private void CanvasMain_MouseEnter(object sender, MouseEventArgs e)
         {
             if (curFigure != null)
@@ -425,7 +431,6 @@ namespace GraphicEditor
         {
             this.Cursor = Cursors.Arrow;
         }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         private void BCreateFigure_Click(object sender, RoutedEventArgs e)
         {
@@ -433,11 +438,11 @@ namespace GraphicEditor
             {
                 compFigNameEn = "";
                 compFigNameRu = "";
-                partFigures = new System.Windows.Shapes.Path[ListBoxOfFigures.SelectedItems.Count];
+                partFigures = new List<System.Windows.Shapes.Path>();
                 int i = 0;
                 foreach (ListBoxItem selectedfig in ListBoxOfFigures.SelectedItems)
                 {
-                    partFigures[i] = listOfFigures[ListBoxOfFigures.Items.IndexOf(selectedfig)].path;
+                    partFigures.Add(listOfFigures[ListBoxOfFigures.Items.IndexOf(selectedfig)].path);
                     i++;
                 }
                 WCreateFigure wCreate = new WCreateFigure();
@@ -452,11 +457,11 @@ namespace GraphicEditor
                     figureButton = figureType.MakeButton(lang);
                     figureButton.Click += CompFigureButton_Click;
                     ShapesPanel.Children.Add(figureButton);
-                }               
+                }
             }
-                    
+
         }
-               
+
 
         private void CompFigureButton_Click(object sender, RoutedEventArgs e)
         {
@@ -476,15 +481,15 @@ namespace GraphicEditor
             curFigure.ToCanvas();
             listOfFigures.Add(curFigure);
             ListBoxItem item = new ListBoxItem();
-                if (lang == "ru")
-                    item.Content = curFigure.typeNameRu;
-                else
-                    item.Content = curFigure.typeName;
-                ListBoxOfFigures.Items.Add(item);
-         
+            if (lang == "ru")
+                item.Content = curFigure.typeNameRu;
+            else
+                item.Content = curFigure.typeName;
+            ListBoxOfFigures.Items.Add(item);
+
         }
 
-////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
         private void BRemove_Click(object sender, RoutedEventArgs e)
         {
             if (ListBoxOfFigures.SelectedItem != null)
@@ -528,9 +533,26 @@ namespace GraphicEditor
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-
+            /*       var allFigures = basicFigures.Concat(additionalFigList);
+             //      allFigures = allFigures.Concat(compositeFigList);
+                   var a = allFigures.Select(x => x.GetType()).Distinct();
+                   XmlSerializer formatter = new XmlSerializer(typeof(List<Figure>), a.ToArray());
+                   try
+                   {
+                       using (FileStream fs = new FileStream(compFile, FileMode.OpenOrCreate))
+                       {
+                           formatter.Serialize(fs, compositeFigList);
+                       }
+                   }
+                   catch (Exception ex)
+                   {
+                       MessageBox.Show(ex.Message);
+                   }*/
         }
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+
     }
-
-
 }
